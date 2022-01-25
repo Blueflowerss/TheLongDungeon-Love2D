@@ -43,7 +43,7 @@ function universe:new(index)
     for i,v in pairs(o.chunks) do
       for x=1,4 do
         for y=1,4 do
-          table.insert(v.objects,tileObject:new(vector(x*global.chunkSize,y*global.chunkSize),400))
+          table.insert(v.objects,tileObject:new(vector(x*global.chunkSize,y*global.chunkSize,1),400))
         end
       end
     end

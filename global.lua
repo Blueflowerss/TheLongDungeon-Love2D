@@ -1,7 +1,7 @@
 require "sprites"
 global = {}
 global.noiseSettings = {}
-global.noiseSettings.tolerance = 0.2
+global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
 global.chunkSize = 8
 global.chunkUnloadDistance = 4
@@ -11,7 +11,7 @@ global.gameSprites = {}
 global.multiverse = {}
 global.spriteDistancing = 128
 global.spriteScaling = 0.5
-global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward"}
+global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown"}
 function global.initializeGame()
   local sprites = love.filesystem.getDirectoryItems("/sprites")
   for index,sprite in pairs(sprites) do

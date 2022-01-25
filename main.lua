@@ -11,7 +11,6 @@ require "player"
 --other tools
 tick = require("tick")
 vector = require("vector")
-vector3 = require("vector3")
 inspect = require("inspect")
 
 require "global"

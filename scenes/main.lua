@@ -23,11 +23,13 @@ function s.draw()
   cameraOffset = player.position *-global.spriteDistancing * global.spriteScaling
   for _,objectList in pairs(global.multiverse[0].collisionMap.collisions) do
     for _,object in pairs(objectList) do
-      local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
-      if object.renderLayer ~= nil then
-        functions.createAndInsertTable(renderStack,object.renderLayer,renderCommand)
-      else
-        functions.createAndInsertTable(renderStack,2,renderCommand)
+      if object.position.z == player.position.z then
+        local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
+        if object.renderLayer ~= nil then
+          functions.createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+        else
+          functions.createAndInsertTable(renderStack,2,renderCommand)
+        end
       end
     end
   end
