@@ -1,0 +1,16 @@
+{"grassy":{"name":"Fields","internalName":"grassy","ground":"stoneWall","grass":"grass","tree":"tree","terrain":"plains",
+"mountains":true,"buildings":false,"treeGen":true,
+"chance":1000,"treeAmount":10
+},
+"autumn":{"name":"Bloody woods","internalName":"autumn","ground":"redStoneWall","grass":"redgrass","tree":"redTree","terrain":"plains",
+"mountains":true,"buildings":false,"treeGen":true,
+"chance":100,"treeAmount":32
+},
+"collapse":{"name":"Ruins","internalName":"collapse","ground":"redStoneWall","grass":"redgrass","tree":"tree","terrain":"plains",
+"mountains":true,"buildings":true,"treeGen":true,
+"chance":10,"treeAmount":10
+},
+"mountains":{"name":"Hills","internalName":"mountains","ground":"stoneWall","grass":"grass","tree":"tree","terrain":"mountains",
+"mountains":true,"buildings":false,"treeGen":true,
+"chance":300,"treeAmount":32
+}}

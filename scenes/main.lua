@@ -6,11 +6,14 @@ require "scene"
 local cameraOffset = vector(0,0)
 --Init
 local s = {}
-
+local reverseTable = functions.reverseTable
+local createAndInsertTable = functions.createAndInsertTable
+local height,width = love.graphics.getDimensions()
 function s.load()
   love.keyboard.setKeyRepeat(true)
+  
   global.multiverse[0]:processCollisions()
-  global.multiverse[0].actors[0] = playerObject:new(10,10)
+  global.multiverse[0].actors[0] = playerObject:new(-430,-210,1)
 end
 function s.unload()
 
@@ -21,20 +24,21 @@ function s.draw()
   local resolution = vector(height,width)
   local renderStack = {}
   cameraOffset = player.position *-global.spriteDistancing * global.spriteScaling
-  for _,objectList in pairs(global.multiverse[0].collisionMap.collisions) do
+  local collisionMap = global.multiverse[0].collisionMap
+  for _,objectList in pairs(collisionMap) do
     for _,object in pairs(objectList) do
       if object.position.z == player.position.z then
         local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
         if object.renderLayer ~= nil then
-          functions.createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+          createAndInsertTable(renderStack,object.renderLayer,renderCommand)
         else
-          functions.createAndInsertTable(renderStack,2,renderCommand)
+          createAndInsertTable(renderStack,2,renderCommand)
         end
       end
     end
   end
-  functions.createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,player.position:__tostring()),10,10})
-  functions.reverseTable(renderStack)
+  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,player.position:__tostring()),10,10})
+  reverseTable(renderStack)
   love.graphics.scale(global.spriteScaling)
   for _,renderLayer in pairs(renderStack) do
     for _,renderCommand in pairs(renderLayer) do
@@ -56,6 +60,7 @@ function s.update(dt)
   for i,actor in pairs(global.multiverse[global.currentUniverse].actors) do
     actor:update(dt)
   end
+
 end
 --[[function s.quit()
     print "exiting..."

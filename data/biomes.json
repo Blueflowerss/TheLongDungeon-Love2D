@@ -1,0 +1,26 @@
+{"grassy":{"name":"Fields","internalName":"grassy",
+"features":["treeGen","mountains"],
+"layerMaterial":{"ground":"stoneWall","grass":"grass","tree":"tree","terrainType":"plains"},
+"settings":{"chance":1000,"treeAmount":10}
+},
+"autumn":{"name":"Bloody woods","internalName":"autumn",
+"features":["treeGen","mountains"],
+"layerMaterial":{"ground":"redStoneWall","grass":"redgrass","tree":"redTree","terrainType":"plains"},
+"settings":{"chance":100,"treeAmount":32}
+},
+"collapse":{"name":"Ruins","internalName":"collapse",
+"features":["treeGen","buildingGen","mountains"],
+"layerMaterial":{"ground":"redStoneWall","grass":"redgrass","tree":"redTree","terrainType":"plains"},
+"settings":{"chance":10,"treeAmount":10}
+},
+"mountains":{"name":"Hills","internalName":"mountains",
+"features":["mountains"],
+"layerMaterial":{"ground":"stoneWall","grass":"grass","tree":"tree","terrainType":"plains"},
+"settings":{"chance":300}
+},
+"desert":{"name":"Dunes","internalName":"desert",
+"features":["mountains"],
+"layerMaterial":{"ground":"stoneWall","grass":"redgrass","tree":"tree","terrainType":"mountains"},
+"settings":{"chance":1000,"treeAmount":10}
+}
+}

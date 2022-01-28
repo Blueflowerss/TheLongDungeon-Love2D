@@ -1,0 +1,15 @@
+{"tropicalworld":{"name":"Tropics","internalName":"tropicalworld",
+"biomes":{"grassy":1},"settings":{"chance":100}
+},
+"arcticworld":{"name":"Frozen Wastes","internalName":"arcticworld",
+"biomes":{"autumn":1},"settings":{"chance":100}
+},
+"desertworld":{"name":"Maker's land","internalName":"desertworld",
+"biomes":{"desert":20,"grassy":5},"settings":{"chance":100}
+},
+"oceanworld":{"name":"Sailors' Ocean","internalName":"oceanworld",
+"biomes":{"grassy":1},"settings":{"chance":100}
+},
+"debugworld":{"name":"Debug","internalName":"debugworld",
+"biomes":{"grassy":1,"desert":1,"autumn":1,"collapse":1},"settings":{"chance":100}
+}}

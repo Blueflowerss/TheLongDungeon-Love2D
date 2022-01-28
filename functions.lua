@@ -1,4 +1,6 @@
 functions = {}
+local min = math.min
+local max = math.max
 local noise = love.math.noise
 function functions.charSplit (inStr)
     local outStr, nextChar = inStr:sub(1, 1)
@@ -29,9 +31,10 @@ function functions.reverseTable(t)
     n = n - 1
   end
 end
-function functions.clamp(low, n, high) return math.min(math.max(n, low), high) end
+function functions.clamp(low, n, high) return min(max(n, low), high) end
 function functions.generateTerrainNoise(octaves,x,y,z,value)
   local tmpNoise = 0
+  value = value or 1
   if octaves == 1 then
       tmpNoise = noise(x*0.01,y * 0.01,z*0.01,value*0.01)
   elseif octaves == 2 then
@@ -46,4 +49,7 @@ function functions.generateTerrainNoise(octaves,x,y,z,value)
   end
   tmpNoise = tmpNoise / octaves
   return tmpNoise
+end
+function functions.normalize(min,value,max) 
+return (value-min)/(max-min)
 end

@@ -13,6 +13,10 @@ function playerObject:new(x,y,z)
     function o:update(dt)
       if o.position ~= o.walkingTo then
         local direction = (o.walkingTo-o.position):norm()
+        local tile = global.multiverse[global.currentUniverse].collisionMap[o.position+direction]
+        if tile ~= nil then
+          print(tile)
+        end
         o.position = o.position + direction
       end
       local chunkPosition = (o.position/global.chunkSize):floor()

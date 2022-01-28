@@ -1,7 +1,6 @@
 input = {}
 
 function input:processInput(key)
-print(key)
 local keys = global.keyBindings
 local actor = global.multiverse[global.currentUniverse].actors[global.currentActor]
 function moveleft()

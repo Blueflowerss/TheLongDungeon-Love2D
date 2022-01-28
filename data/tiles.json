@@ -1,0 +1,13 @@
+
+{"1":{"spriteId":5,"name":"brickWall","flags":["blocks"]},
+"3":{"spriteId":6,"name":"woodFloor"},
+"5":{"spriteId":7,"name":"bat"},
+"6":{"spriteId":8,"name":"kumoko"},
+"7":{"spriteId":9,"name":"snek"},
+"8":{"spriteId":10,"name":"garfield"},
+"400":{"spriteId":400,"name":"grass"},
+"401":{"spriteId":401,"name":"redgrass"},
+"500":{"spriteId":500,"name":"stoneWall","flags":["blocks"]},
+"501":{"spriteId":501,"name":"redStoneWall","flags":["blocks"]},
+"550":{"spriteId":550,"name":"tree"},
+"551":{"spriteId":551,"name":"redTree"}}

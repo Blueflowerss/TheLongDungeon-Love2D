@@ -1,0 +1,7 @@
+{"door":{"trueSprite":20,"falseSprite":19,"class":"Door","name":"door"},
+ "tree":{"sprite":550,"class":"Furniture","flags":{"blocks":0},"name":"tree"},
+ "chair": {"sprite":25,"class":"Furniture","name":"chair"},
+ "table": {"sprite":26,"class":"Furniture","name":"table","flags":{"blocks":0}},
+ "bed": {"sprite":27,"class":"Furniture","name":"bed"},
+ "sign": {"sprite":28,"class":"Sign","name":"sign","flags":{"blocks":0,"interactible":0}}
+}

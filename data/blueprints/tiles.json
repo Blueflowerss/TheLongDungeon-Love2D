@@ -1,0 +1,4 @@
+[{"data":{"devname":"ground","displayname":"Ground","sprite":400},"flags":["colourBiomeDependent","tile"]},
+{"data":{"devname":"wall","displayname":"Wall","sprite":2},"flags":["tile","blocks"]}
+
+]

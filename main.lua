@@ -3,12 +3,15 @@ require "class"
 require "input"
 require "functions"
 require "worldFunctions"
+require "classFactory"
 --class objects
 require "universe"
 require "tile"
 require "chunk"
 require "player"
 --other tools
+love.profiler = require('profile') 
+lunajson = require 'lunajson'
 tick = require("tick")
 vector = require("vector")
 inspect = require("inspect")
@@ -19,7 +22,6 @@ local FIRST_SCENE = "main"
 
 function love.load()
   tick.framerate = 60
-  
   global.initializeGame()
 	Scene.Load(FIRST_SCENE)
 end

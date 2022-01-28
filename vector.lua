@@ -30,7 +30,7 @@ local rand = math.random
 if love and love.math then rand = love.math.random end
 
 -- makes a new vector
-local function new(x,y)
+local function new(x,y,z)
   return setmetatable({x=x or 0, y=y or 0, z=z or 0}, vector)
 end
 
