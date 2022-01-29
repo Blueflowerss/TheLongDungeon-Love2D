@@ -53,3 +53,10 @@ end
 function functions.normalize(min,value,max) 
 return (value-min)/(max-min)
 end
+function table.shallow_copy(t)
+  local t2 = {}
+  for k,v in pairs(t) do
+    t2[k] = v
+  end
+  return t2
+end

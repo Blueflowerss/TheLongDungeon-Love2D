@@ -5,6 +5,7 @@ local max = math.max
 local clamp = functions.clamp
 local generateTerrainNoise = functions.generateTerrainNoise
 local normalize = functions.normalize
+local isTileGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject) 
   centerOfRemovalVector = centerOfRemovalVector
   lastChunk = universeObject.actors[global.currentActor].playerLastChunk
@@ -25,6 +26,9 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     end
   end
   for _,toBeRemoved in pairs(chunksToRemove) do
+    for i,object in pairs(universeObject.chunks[toBeRemoved].objects) do
+      isTileGenerated[object.position:__tostring()] = nil
+    end
     universeObject.chunks[toBeRemoved] = nil
   end
 end
@@ -34,9 +38,14 @@ function worldFunctions.generateTerrain(chunk)
         local height = generateTerrainNoise(3,x+chunk.chunkPosition.x*global.chunkSize,y+chunk.chunkPosition.y*global.chunkSize,global.currentUniverse)
         height = floor(normalize(1,height*10,global.height))
           for z=1,height do
-            local sprite = 500
-            if z == height then sprite = 401 end 
-            table.insert(chunk.objects,tileObject:new((vector(x,y,z)+chunk.chunkPosition*global.chunkSize),sprite))
+            if isTileGenerated[(vector(x,y,z)+chunk.chunkPosition*global.chunkSize):__tostring()] == nil then
+              local tileType = ""
+              if z == height then tileType = "ground" else tileType="wall" end
+              local tile = classFactory.getObject(tileType)
+              tile.position = (vector(x,y,z)+chunk.chunkPosition*global.chunkSize)
+              table.insert(chunk.objects,tile) 
+              isTileGenerated[tile.position:__tostring()] = true
+            end
           end
       end
     end

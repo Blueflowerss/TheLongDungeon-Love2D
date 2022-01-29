@@ -11,7 +11,6 @@ local createAndInsertTable = functions.createAndInsertTable
 local height,width = love.graphics.getDimensions()
 function s.load()
   love.keyboard.setKeyRepeat(true)
-  
   global.multiverse[0]:processCollisions()
   global.multiverse[0].actors[0] = playerObject:new(-430,-210,1)
 end
@@ -28,11 +27,13 @@ function s.draw()
   for _,objectList in pairs(collisionMap) do
     for _,object in pairs(objectList) do
       if object.position.z == player.position.z then
-        local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
-        if object.renderLayer ~= nil then
-          createAndInsertTable(renderStack,object.renderLayer,renderCommand)
-        else
-          createAndInsertTable(renderStack,2,renderCommand)
+        if object.sprite ~= nil then
+          local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
+          if object.renderLayer ~= nil then
+            createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+          else
+            createAndInsertTable(renderStack,2,renderCommand)
+          end
         end
       end
     end

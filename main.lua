@@ -21,6 +21,7 @@ local FIRST_SCENE = "main"
 
 
 function love.load()
+  love.window.setTitle("The Long Dungeon - Love2D")
   tick.framerate = 60
   global.initializeGame()
 	Scene.Load(FIRST_SCENE)

@@ -1,10 +1,11 @@
 global = {}
+
 global.noiseSettings = {}
 global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
 global.chunkSize = 8
 global.height = 4
-global.chunkUnloadDistance = 3
+global.chunkUnloadDistance = 4
 global.currentUniverse = 0
 global.currentActor = 0
 global.gameSprites = {}
@@ -19,7 +20,6 @@ function global.initializeGame()
     local spriteSlot = tonumber(string.sub(sprite,1,4))
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
-
   global.multiverse[0] = universe:new(0)
 end
 

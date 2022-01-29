@@ -11,11 +11,11 @@ local createAndInsertTable = functions.createAndInsertTable
 function classFactory.init()
   flagDefinitions = {
     ["base"]={["devname"]=""},
-    ["item"]={["pos"]=vector(0,0),["sprite"]=1,["displayname"]="",["weight"]=1,["meleedamage"]=1},
-    ["furniture"]={["pos"]=vector(0,0),["sprite"]=1},
+    ["item"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]="",["weight"]=1,["meleedamage"]=1},
+    ["furniture"]={["position"]=vector(0,0),["sprite"]=1},
     ["door"]={["state"]=false,["spriteTrue"]=1,["spriteFalse"]=1},
     ["sign"]={["text"]=""},
-    ["tile"]={["pos"]=vector(0,0),["sprite"]=1,["displayname"]=""}
+    ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""}
 }
   --get blueprint json files
   for index,blueprint in pairs(love.filesystem.getDirectoryItems("/data/blueprints/")) do
@@ -53,7 +53,10 @@ function classFactory.init()
         o[attributeName] = attribute
       end
     end
-    print(o.displayname)
-    table.insert(finishedObjects,o)
+    assert(not finishedObjects[o.devname],"duplicate found by name of "..o.devname)
+    finishedObjects[o.devname] = o
   end
+end
+function classFactory.getObject(devname)
+  return table.shallow_copy(finishedObjects[devname])
 end
