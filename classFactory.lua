@@ -18,10 +18,13 @@ function classFactory.init()
     ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""}
 }
   --get blueprint json files
+  local workingDirectory = love.filesystem.getWorkingDirectory()
+  assert(workingDirectory~=nil,"Couldn't find working directory")
   for index,blueprint in pairs(love.filesystem.getDirectoryItems("/data/blueprints/")) do
-    local file = io.open(os.getenv("PWD").."/The-Long-Dungeon-Love2D/data/blueprints/"..blueprint, "r")
-    blueprints[index] = io.input(file):read("*all")
+    local file = love.filesystem.read("/data/blueprints/"..blueprint)
+    blueprints[index] = file
   end
+  --assert(false,workingDirectory.."/The-Long-Dungeon-Love2D/data/blueprints/"..inspect(blueprints))
   --get objects from said files
   for _,object in pairs(blueprints) do
     local jsonFile = lunajson.decode(object)
