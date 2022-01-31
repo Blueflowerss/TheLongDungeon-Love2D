@@ -26,7 +26,8 @@ end
 function stepback()
 end
 function debug()
-  print(inspect(global.multiverse[global.currentUniverse].collisionMap[actor.position:__tostring()]))
+  print((actor.position/global.chunkSize):floor())
+  print(inspect(global.multiverse[global.currentUniverse].chunks))
 end
 local controls = {["moveleft"]=moveleft,["moveright"]=moveright,["moveup"]=moveup,["movedown"]=movedown,
   ["stepforward"]=stepforward,["stepback"]=stepback,climbup=climbup,climbdown=climbdown,debug=debug}

@@ -17,10 +17,7 @@ function universe:new(index)
     o.chunks = {}
     o.index = index
     o.actors = {}
-    for x=1,10 do
-      for y=1,10 do
-        o.chunks[vector(x,y)] = chunkObject:new(vector(x,y))
-      end
-    end
+    worldFunctions.chunkGeneration(global.playerSpawnPoint,3,o)
+    
     return o
 end

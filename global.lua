@@ -12,6 +12,7 @@ global.gameSprites = {}
 global.multiverse = {}
 global.spriteDistancing = 128
 global.spriteScaling = 0.5
+global.playerSpawnPoint = vector(-460,-210,1)
 global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",g="debug"}
 function global.initializeGame()
   local sprites = love.filesystem.getDirectoryItems("/sprites")

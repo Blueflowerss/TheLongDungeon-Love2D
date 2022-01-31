@@ -7,20 +7,19 @@ local generateTerrainNoise = functions.generateTerrainNoise
 local normalize = functions.normalize
 local isTileGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject) 
-  centerOfRemovalVector = centerOfRemovalVector
-  lastChunk = universeObject.actors[global.currentActor].playerLastChunk
+  local centerOfRemoval = (centerOfRemovalVector/global.chunkSize):floor()
   for x=-range,range do
     for y=-range,range do
-        if universeObject.chunks[centerOfRemovalVector+vector(x,y)] == nil then
-          local chunk = chunkObject:new(centerOfRemovalVector+vector(x,y))
+        if universeObject.chunks[centerOfRemoval+vector(x,y)] == nil then
+          local chunk = chunkObject:new(centerOfRemoval+vector(x,y))
           worldFunctions.generateTerrain(chunk)
-          universeObject.chunks[vector(x,y)+centerOfRemovalVector] = chunk
+          universeObject.chunks[vector(x,y)+centerOfRemoval] = chunk
         end
     end
   end
   local chunksToRemove = {}
   for chunkIndex,chunk in pairs(universeObject.chunks) do 
-    local distanceFromPlayer = floor(chunk.chunkPosition.dist(lastChunk,chunk.chunkPosition))
+    local distanceFromPlayer = floor(chunk.chunkPosition.dist(centerOfRemoval,chunk.chunkPosition))
     if distanceFromPlayer >= global.chunkUnloadDistance then
       table.insert(chunksToRemove,chunkIndex)
     end

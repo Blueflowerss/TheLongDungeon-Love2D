@@ -202,7 +202,8 @@ function vector:unpack()
   return self.x, self.y,self.z
 end
 function vector:floor()
-  return self:set(math.floor(self.x),math.floor(self.y),math.floor(self.z))
+  local floor = math.floor
+  return self:set(floor(self.x),floor(self.y),floor(self.z))
 end
 
 

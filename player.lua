@@ -1,32 +1,42 @@
 playerObject = {}
- 
-function playerObject:new(x,y,z)
+local floor = math.floor
+function playerObject:new(spawnVector)
     local o = {}
     o.sprite = 3
     o.renderLayer = 1
     o.flags = {}
-    o.position = vector(x,y,z)
+    o.position = spawnVector
     o.walkingTo = o.position
-    o.playerLastChunk = o.position / global.chunkSize
+    o.playerLastChunk = o.position
     function o:move(moveVector)
       o.walkingTo = o.position+moveVector
     end
     function o:update(dt)
+      local objectList = global.multiverse[global.currentUniverse].collisionMap
+      local tile =  objectList[o.position:__tostring()]
+      local falling = true
+      for _,object in pairs(tile) do
+        if object.flags["floor"] then
+          falling = false
+          break
+        end
+      end
+      if falling then
+        o.position.z = o.position.z-1
+        o.walkingTo = o.position
+      end
       if o.position ~= o.walkingTo then
-        local direction = (o.walkingTo-o.position):norm()
-        objectList = global.multiverse[global.currentUniverse].collisionMap
+        local direction = ((o.walkingTo-o.position):norm()):floor()
         local blocked = false
         if objectList[(o.position+direction):__tostring()] ~= nil then
           local tile = objectList[(o.position+direction):__tostring()]
           for _,object in pairs(tile) do
-            if object.flags["blocks"] then
+              if object.flags["blocks"] then
                 blocked = true
-              break
-            end
-          end
+                break
+              end
+        end
         else
-          o.position = (o.position+direction-vector(0,0,1))
-          o.walkingTo = o.position
         end
         if not blocked then
           o.position = o.position + direction
@@ -62,7 +72,7 @@ function playerObject:new(x,y,z)
       
       local chunkPosition = (vector(o.position.x,o.position.y)/global.chunkSize):floor()
       if o.playerLastChunk ~= chunkPosition then
-        worldFunctions.chunkGeneration((o.position/global.chunkSize):floor(),3,global.multiverse[global.currentUniverse])
+        worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse])
         o.playerLastChunk = chunkPosition
       end
     end

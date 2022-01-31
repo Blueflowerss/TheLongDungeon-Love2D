@@ -11,8 +11,8 @@ local createAndInsertTable = functions.createAndInsertTable
 local height,width = love.graphics.getDimensions()
 function s.load()
   love.keyboard.setKeyRepeat(true)
-  global.multiverse[0]:processCollisions()
-  global.multiverse[0].actors[0] = playerObject:new(-430,-210,1)
+  global.multiverse[global.currentUniverse]:processCollisions()
+  global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
 end
 function s.unload()
 
