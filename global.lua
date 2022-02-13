@@ -3,8 +3,9 @@ global = {}
 global.noiseSettings = {}
 global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
-global.chunkSize = 8
-global.height = 3
+global.chunkSize = 6
+global.height = 2
+global.heightMultiplier = 100
 global.chunkUnloadDistance = 4
 global.currentUniverse = 0
 global.currentActor = 0
@@ -14,7 +15,7 @@ global.gameSprites = {}
 global.multiverse = {}
 global.spriteDistancing = 128
 global.spriteScaling = 0.5
-global.playerSpawnPoint = vector(460,20,3)
+global.playerSpawnPoint = vector(460,20,100)
 global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
 w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",
 g="debug",b="build",[","]="buildSlotLeft",["."]="buildSlotRight",

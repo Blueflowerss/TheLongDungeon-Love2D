@@ -9,16 +9,19 @@ local normalize = functions.normalize
 local isTileGenerated = {}
 local isChunkGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject) 
-  local centerOfRemoval = (centerOfRemovalVector/global.chunkSize):floor()
-  centerOfRemoval.z = 0
+  local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
+  --centerOfRemoval.z = 0
+  local height = global.height
   for x=-range,range do
     for y=-range,range do
-        if isChunkGenerated[(centerOfRemoval+vector(x,y)):__tostring()] == nil then
-          local chunk = chunkObject:new(centerOfRemoval+vector(x,y))
+      for z=-height,height do
+        if isChunkGenerated[(centerOfRemoval+vector(x,y,z)):__tostring()] == nil then
+          local chunk = chunkObject:new(centerOfRemoval+vector(x,y,z))
           worldFunctions.generateTerrain(chunk)
           isChunkGenerated[chunk.chunkPosition:__tostring()] = true
           universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
         end
+      end
     end 
   end
   local chunksToKeep = {}
@@ -36,18 +39,20 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
   universeObject.chunks = chunksToKeep
 end
 function worldFunctions.generateTerrain(chunk) 
-    for x=1,global.chunkSize do
-      for y=1,global.chunkSize do
-        local height = generateTerrainNoise(3,x+chunk.chunkPosition.x,y+chunk.chunkPosition.y,global.currentUniverse)
+    local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
+    for x=0,global.chunkSize do
+      for y=0,global.chunkSize do
+        local height = generateTerrainNoise(3,x+position.x,y+position.y,global.currentUniverse)*global.heightMultiplier
         height = ceil(height)
-          for z=0,height do
-            if isTileGenerated[(vector(x,y,z)+chunk.chunkPosition*global.chunkSize):__tostring()] == nil then
+          for z=0,global.height do
+            local tilePosition = position+vector(x,y,z)
+            if isTileGenerated[tilePosition:__tostring()] == nil and tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
-              if z == height then tileType = "ground" else tileType="wall" end
+              if tilePosition.z == height then tileType = "ground" else tileType="wall" end
               local tile = classFactory.getObject(tileType)
-              tile.position = (vector(x,y,z)+chunk.chunkPosition*global.chunkSize)
+              tile.position = tilePosition
               table.insert(chunk.objects,tile) 
-              isTileGenerated[tile.position:__tostring()] = true
+              isTileGenerated[tilePosition:__tostring()] = true
             end
           end
       end

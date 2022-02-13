@@ -71,7 +71,7 @@ function playerObject:new(spawnVector)
         end
       end
       
-      local chunkPosition = (vector(o.position.x,o.position.y)/global.chunkSize):floor()
+      local chunkPosition = (vector(o.position.x/global.chunkSize,o.position.y/global.chunkSize,o.position.z/global.height)):floor()
       if o.playerLastChunk ~= chunkPosition then
         worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse])
         o.playerLastChunk = chunkPosition
