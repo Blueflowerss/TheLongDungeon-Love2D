@@ -23,8 +23,7 @@ function input:processInput(key)
       local objectName = classFactory.finishedObjectsIndexTable[(global.buildSlot%classFactory.databaseLength)+1]
       local object = classFactory.getObject(objectName)
       object.position = placedObjectPos
-      local chunkPos = (placedObjectPos/global.chunkSize):floor()
-      chunkPos.z = 0
+      local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):ceil()
       local chunk = universe.chunks[chunkPos:__tostring()]
       local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
       local obstructed = false

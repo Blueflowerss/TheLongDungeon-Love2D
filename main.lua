@@ -9,6 +9,7 @@ require "universe"
 require "tile"
 require "chunk"
 require "player"
+fov = require("rsfov") 
 --other tools
 love.profiler = require('profile') 
 lunajson = require 'lunajson'
