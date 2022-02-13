@@ -8,6 +8,7 @@ function playerObject:new(spawnVector)
     o.position = spawnVector
     o.walkingTo = o.position
     o.playerLastChunk = o.position
+    o.gravity = vector(0,0,1)
     function o:move(moveVector)
       o.walkingTo = o.position+moveVector
     end
@@ -22,13 +23,13 @@ function playerObject:new(spawnVector)
         end
       end
       if falling then
-        o.position.z = o.position.z-1
+        o.position = o.position-o.gravity
         o.walkingTo = o.position
       end
       if o.position ~= o.walkingTo then
-        local direction = ((o.walkingTo-o.position):norm()):floor()
+        local direction = ((o.walkingTo-o.position):norm()):ceil()
         local blocked = false
-        if objectList[(o.position+direction):__tostring()] ~= nil then
+        if objectList[(o.position+direction):__tostring()] then
           local tile = objectList[(o.position+direction):__tostring()]
           for _,object in pairs(tile) do
               if object.flags["blocks"] then
@@ -44,9 +45,9 @@ function playerObject:new(spawnVector)
           --walking up hills
           local ceilingBlocked = false
           local tile = objectList[(o.position+vector(0,0,1)):__tostring()]
-          if tile ~= nil then
+          if tile then
             for _,object in pairs(tile) do
-              if object.flags["floor"] then
+              if object.flags["floor"] or object.flags["blocks"] then
                 ceilingBlocked = true
                 break
               end
@@ -55,7 +56,7 @@ function playerObject:new(spawnVector)
           if not ceilingBlocked then
             local blockedByHigherWall = false
             tile = objectList[(o.position+direction+vector(0,0,1)):__tostring()]
-            if tile ~= nil then
+            if tile then
               for _,object in pairs(tile) do
                 if object.flags["blocks"] then
                   blockedByHigherWall = true

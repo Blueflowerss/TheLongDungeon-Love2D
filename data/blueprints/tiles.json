@@ -1,5 +1,5 @@
 [{"data":{"devname":"ground","displayname":"Ground","sprite":401},"flags":{"tile":true,"floor":true}},
 {"data":{"devname":"wall","displayname":"Wall","sprite":500},"flags":{"tile":true,"blocks":true}},
-{"data":{"devname":"air","displayname":"Empty air"},"flags":{"tile":true,"causesFalling":true}}
+{"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6},"flags":{"tile":true,"floor":true}}
 
 ]

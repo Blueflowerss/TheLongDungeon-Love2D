@@ -39,11 +39,11 @@ function s.draw()
     end
   end
   createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,player.position:__tostring()),10,10})
+  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,global.buildSlotName),10,30})
   reverseTable(renderStack)
   love.graphics.scale(global.spriteScaling)
   for _,renderLayer in pairs(renderStack) do
     for _,renderCommand in pairs(renderLayer) do
-      
       love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])
     end
   end

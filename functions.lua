@@ -60,3 +60,23 @@ function table.shallow_copy(t)
   end
   return t2
 end
+function table.findString(table,strings)
+  local found = false
+  local values = {}
+  for _,string in pairs(strings) do
+    for i,v in pairs(table) do 
+      if v == string then
+        values[string] = true
+        break
+      end
+    end
+  end
+  return values
+end
+function table.length(table)
+  local count = 0
+  for i,v in pairs(table) do
+    count = count + 1
+  end
+  return count
+end

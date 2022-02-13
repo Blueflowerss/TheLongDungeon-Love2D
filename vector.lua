@@ -119,8 +119,14 @@ end
 
 -- meta function to divide vectors
 function vector.__div(a,b)
-  assert(isvector(a) and type(b) == "number", "div: wrong argument types (expected <vector> and <number>)")
-  return new(a.x/b, a.y/b,a.z/b)
+  if type(a) == 'number' then 
+    return new(a / b.x, a / b.y,a/b.z)
+  elseif type(b) == 'number' then
+    return new(a.x / b, a.y / b,a.z / b)
+  else
+    assert(isvector(a) and isvector(b),  "mul: wrong argument types: (expected <vector> or <number>)")
+    return new(a.x/b.x, a.y/b.y,a.z/b.z)
+  end
 end
 
 -- meta function to check if vectors have the same values
@@ -205,7 +211,10 @@ function vector:floor()
   local floor = math.floor
   return self:set(floor(self.x),floor(self.y),floor(self.z))
 end
-
+function vector:ceil()
+  local ceil = math.ceil
+  return self:set(ceil(self.x),ceil(self.y),ceil(self.z))
+end
 
 
 -- pack up and return module

@@ -6,7 +6,10 @@ local saveableData = {
 }
 local blueprints = {}
 local objects = {}
-local finishedObjects = {}
+--databaseLength is just length of the finishedObjects table, cheaper to do it this way.
+classFactory.databaseLength = 0
+classFactory.finishedObjectsIndexTable = {}
+classFactory.finishedObjects = {}
 local createAndInsertTable = functions.createAndInsertTable
 function classFactory.init()
   flagDefinitions = {
@@ -33,12 +36,12 @@ function classFactory.init()
     end
   end
   --turn objects into actual in-game objects
-  for _,object in pairs(objects) do
+  for objectIndex,object in pairs(objects) do
     local o = {}
     o.flags = object.flags 
     o.interactions = {}
     for _,flag in pairs(o.flags) do
-      if flagDefinitions[flag] ~= nil then
+      if flagDefinitions[flag] then
         definition = flagDefinitions[flag] 
         --add attributes indicated by object's flags
         for attributeName,attribute in pairs(definition) do
@@ -56,10 +59,12 @@ function classFactory.init()
         o[attributeName] = attribute
       end
     end
-    assert(not finishedObjects[o.devname],"duplicate found by name of "..o.devname)
-    finishedObjects[o.devname] = o
+    assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
+    classFactory.databaseLength = classFactory.databaseLength + 1
+    classFactory.finishedObjects[o.devname] = o
+    classFactory.finishedObjectsIndexTable[objectIndex] = o.devname
   end
 end
 function classFactory.getObject(devname)
-  return table.shallow_copy(finishedObjects[devname])
+  return table.shallow_copy(classFactory.finishedObjects[devname])
 end
