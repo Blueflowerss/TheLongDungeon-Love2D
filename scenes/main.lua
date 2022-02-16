@@ -32,18 +32,22 @@ function generateVisible()
   local collisionMap = global.multiverse[global.currentUniverse].collisionMap
   visible = {}
 	
-	local isTransparent = function(x,y)
+local isTransparent = function(x,y)
     local position = vector(x,y,player.position.z):__tostring()
+    local blocked = false
     if collisionMap[position] then
       for _,object in pairs(collisionMap[position]) do
-        if object.flags["blocks"] == nil then
-          return collisionMap[position] 
+        if object.flags["blocks"] then
+          blocked = true
         end
+      end
+      if blocked then 
+      else
+        return true
       end
     else
       return true
     end
-		
 	end
 	
 	local onVisible = function(x,y)
