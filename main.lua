@@ -2,6 +2,7 @@ require "scene"
 require "class"
 require "input"
 require "functions"
+require "rendering"
 require "worldFunctions"
 require "classFactory"
 --class objects

@@ -17,53 +17,6 @@ end
 function s.unload()
 
 end
-function generateVisible()
-  local tw,th      = 8,8
-  local px,py      = 1,1
-  local radius     = 20
-  local radius_type= 'square'
-  local perm       = 5
-  local angle      = 0
-  local angle_size = 360
-  local delta      = 5
-  local width      = 800
-  local height     = 800
-  local player = global.multiverse[global.currentUniverse].actors[global.currentActor]
-  local collisionMap = global.multiverse[global.currentUniverse].collisionMap
-  visible = {}
-	
-local isTransparent = function(x,y)
-    local position = vector(x,y,player.position.z):__tostring()
-    local blocked = false
-    if collisionMap[position] then
-      for _,object in pairs(collisionMap[position]) do
-        if object.flags["blocks"] then
-          blocked = true
-        end
-      end
-      if blocked then 
-      else
-        return true
-      end
-    else
-      return true
-    end
-	end
-	
-	local onVisible = function(x,y)
-		local dx,dy = x-px,y-py
-		if (dx*dx + dy*dy) > radius*radius + radius and radius_type == 'circle' then 
-			return 
-		end
-		
-		visible[vector(x,y,player.position.z):__tostring()]    = visible[vector(x,y,player.position.z):__tostring()] or {}
-		visible[vector(x,y,player.position.z):__tostring()] = 1
-	end
-		
-	fov(player.position.x,player.position.y,radius,isTransparent,onVisible,math.rad(angle-angle_size/2),math.rad(angle+angle_size/2),perm)
-  print(inspect(visible))
-
-end
 function s.draw()
   generateVisible()
   local player = global.multiverse[global.currentUniverse].actors[global.currentActor]
@@ -72,20 +25,25 @@ function s.draw()
   local renderStack = {}
   cameraOffset = player.position *-global.spriteDistancing * global.spriteScaling
   local collisionMap = global.multiverse[0].collisionMap
---  for _,objectList in pairs(collisionMap) do
---    for _,object in pairs(objectList) do
---      if object.position.z == player.position.z then
---        if object.sprite ~= nil then
---          local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
---          if object.renderLayer ~= nil then
---            createAndInsertTable(renderStack,object.renderLayer,renderCommand)
---          else
---            createAndInsertTable(renderStack,2,renderCommand)
---          end
---        end
---      end
---    end
---  end
+  local backroundCanvas = love.graphics.newCanvas(resolution.x*2,resolution.y*2)
+  love.graphics.setCanvas(backroundCanvas)
+  love.graphics.push()
+  love.graphics.scale(2)
+  love.graphics.setColor({0,1.5,1})
+  
+  for x=-1,resolution.x/32 do
+    for y=-1,resolution.y/32 do
+      local mask = player.position+vector(x,y)-vector(12,9)
+      if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
+          love.graphics.rectangle("fill",(x*32)+16,(y*32)+12,32,32)
+      end
+
+    end
+  end
+  love.graphics.setColor({255,255,255})
+  love.graphics.pop()
+  love.graphics.setCanvas()
+  createAndInsertTable(renderStack,-2,{backroundCanvas,0,0})
   if visible then
     for objectPos,object in pairs(visible) do
       if collisionMap[objectPos] then
