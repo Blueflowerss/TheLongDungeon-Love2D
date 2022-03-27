@@ -9,6 +9,10 @@ local s = {}
 local reverseTable = functions.reverseTable
 local createAndInsertTable = functions.createAndInsertTable
 local height,width = love.graphics.getDimensions()
+local floor = math.floor
+local ceil = math.ceil
+skyValue1 = {floor(width/50),floor(height/50)}
+skyValue2 = {floor(width/66.666666),floor(height/66.666666)}
 function s.load()
   love.keyboard.setKeyRepeat(true)
   global.multiverse[global.currentUniverse]:processCollisions()
@@ -33,9 +37,9 @@ function s.draw()
   
   for x=-1,resolution.x/32 do
     for y=-1,resolution.y/32 do
-      local mask = player.position+vector(x,y)-vector(12,9)
+      local mask = player.position+vector(x,y)-vector(skyValue2[1] ,skyValue2[2])
       if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
-          love.graphics.rectangle("fill",(x*32)+16,(y*32)+12,32,32)
+          love.graphics.rectangle("fill",(x*32)+skyValue1[1],(y*32)+skyValue1[2],32,32)
       end
 
     end
@@ -43,7 +47,7 @@ function s.draw()
   love.graphics.setColor({255,255,255})
   love.graphics.pop()
   love.graphics.setCanvas()
-  createAndInsertTable(renderStack,-2,{backroundCanvas,0,0})
+  createAndInsertTable(renderStack,0,{backroundCanvas,0,0})
   if visible then
     for objectPos,object in pairs(visible) do
       if collisionMap[objectPos] then
@@ -87,5 +91,8 @@ end
 --[[function s.quit()
     print "exiting..."
 end]]
-
+function s.resize(w,h)
+  skyValue1 = {ceil(w/50),ceil(h/50)}
+  skyValue2 = {ceil(w/66.666666),ceil(h/66.666666)}
+end
 return s
