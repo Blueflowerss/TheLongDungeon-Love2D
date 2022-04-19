@@ -32,7 +32,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     else
       isChunkGenerated[chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
-        global.saveChunk(chunk)
+        global.saveChunk(universeObject,chunk)
       end
       for i,tile in pairs(chunk.objects) do
         isTileGenerated[tile.position:__tostring()] = nil
