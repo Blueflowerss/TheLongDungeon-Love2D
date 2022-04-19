@@ -12,8 +12,9 @@ local height,width = love.graphics.getDimensions()
 local floor = math.floor
 local ceil = math.ceil
 local saveTimer = 0
-skyValue1 = {floor(width/50),floor(height/50)}
-skyValue2 = {floor(width/66.666666),floor(height/66.666666)}
+skyValue1 = {(width/50),(height/50)}
+skyValue2 = {(width/66.6),(height/66.6)}
+print(inspect(skyValue2))
 function s.load()
   love.keyboard.setKeyRepeat(true)
   global.multiverse[global.currentUniverse]:processCollisions()
@@ -39,8 +40,9 @@ function s.draw()
   for x=-1,resolution.x/32 do
     for y=-1,resolution.y/32 do
       local mask = player.position+vector(x,y)-vector(skyValue2[1] ,skyValue2[2])
+      mask = mask:ceil()
       if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
-          love.graphics.rectangle("fill",(x*32)+skyValue1[1],(y*32)+skyValue1[2],32,32)
+          love.graphics.rectangle("fill",ceil((x*32)+skyValue1[1]),ceil((y*32)+skyValue1[2]),32,32)
       end
 
     end
@@ -97,7 +99,7 @@ end
     print "exiting..."
 end]]
 function s.resize(w,h)
-  skyValue1 = {ceil(w/50),ceil(h/50)}
-  skyValue2 = {ceil(w/66.666666),ceil(h/66.666666)}
+  skyValue1 = {(w/50),(h/50)}
+  skyValue2 = {(w/66.6),(h/66.6)}
 end
 return s
