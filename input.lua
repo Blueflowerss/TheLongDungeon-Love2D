@@ -57,6 +57,7 @@ function input:processInput(key)
           object.position = placedObjectPos+vector(0,0,1)
           table.insert(chunk.objects,object)
         end
+        chunk.altered = true
       end
 
       inputCurrentMode = modes.MOVE

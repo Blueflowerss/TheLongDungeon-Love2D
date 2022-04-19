@@ -16,6 +16,10 @@ global.multiverse = {}
 global.spriteDistancing = 128
 global.spriteScaling = 0.5
 global.playerSpawnPoint = vector(460,20,100)
+global.saveableData = {
+    ["position"]=0,["state"]=0,["text"]=""
+}
+global.saveFile = {}
 global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
 w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",
 g="debug",b="build",[","]="buildSlotLeft",["."]="buildSlotRight",
@@ -30,4 +34,21 @@ function global.initializeGame()
   end
   global.multiverse[0] = universe:new(0)
 end
-
+function global.saveChunk(chunk)
+  local savedChunk = {["objects"]={},["position"]=chunk.chunkPosition:__tostring()}
+  for i,object in pairs(chunk.objects) do
+    local objectData = {}
+    for dataType,data in pairs(object) do
+      if global.saveableData[dataType] ~= nil then
+        table.insert(objectData,{[dataType]=data})
+      end
+    end
+    local compressedObject = {devname=object.devname,data=flags,position=object.position}
+    table.insert(savedChunk.objects,compressedObject)
+  end
+  love.filesystem.createDirectory("chunk/"..savedChunk.position)
+end
+function global.loadChunk(chunk)
+end
+function global.saveGame()
+end

@@ -30,10 +30,14 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
-      isChunkGenerated[chunk.chunkPosition:__tostring()] = nil
+      isChunkGenerated[chunk.chunkPosition:__tostring()] = nil 
+      if chunk.altered then
+        global.saveChunk(chunk)
+      end
       for i,tile in pairs(chunk.objects) do
         isTileGenerated[tile.position:__tostring()] = nil
       end
+      
     end
   end
   universeObject.chunks = chunksToKeep

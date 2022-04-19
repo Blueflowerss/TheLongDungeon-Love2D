@@ -11,6 +11,7 @@ local createAndInsertTable = functions.createAndInsertTable
 local height,width = love.graphics.getDimensions()
 local floor = math.floor
 local ceil = math.ceil
+local saveTimer = 0
 skyValue1 = {floor(width/50),floor(height/50)}
 skyValue2 = {floor(width/66.666666),floor(height/66.666666)}
 function s.load()
@@ -80,6 +81,10 @@ end
 function s.keyreleased(key)
 end
 function s.update(dt)
+  saveTimer = saveTimer + dt 
+  if saveTimer > 60 then
+    
+  end
   for i,universe in pairs(global.multiverse) do
     universe:processCollisions()
   end

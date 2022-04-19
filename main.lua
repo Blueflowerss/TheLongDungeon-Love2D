@@ -23,6 +23,7 @@ local FIRST_SCENE = "main"
 
 
 function love.load()
+  love.filesystem.setIdentity("LongDungeon")
   love.window.setMode(800, 600, {resizable=true})
   love.window.setTitle("The Long Dungeon - Love2D")
   tick.framerate = 60

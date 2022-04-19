@@ -1,9 +1,7 @@
 classFactory = {}
 local flagDefinitions = {}
 local interactions = {"door","sign"}
-local saveableData = {
-    "pos","state","text"
-}
+
 local blueprints = {}
 local objects = {}
 --databaseLength is just length of the finishedObjects table, cheaper to do it this way.
