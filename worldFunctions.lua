@@ -10,16 +10,23 @@ local isTileGenerated = {}
 local isChunkGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject) 
   local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
-  --centerOfRemoval.z = 0
   local height = global.height
   for x=-range,range do
     for y=-range,range do
       for z=-height,height do
-        if isChunkGenerated[(centerOfRemoval+vector(x,y,z)):__tostring()] == nil then
-          local chunk = chunkObject:new(centerOfRemoval+vector(x,y,z))
-          worldFunctions.generateTerrain(chunk)
-          isChunkGenerated[chunk.chunkPosition:__tostring()] = true
-          universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
+        local chunkPositionString = (centerOfRemoval+vector(x,y,z)):__tostring()
+        local chunkPosition = centerOfRemoval+vector(x,y,z)
+        if isChunkGenerated[chunkPositionString] == nil then
+          if global.chunkFiles[chunkPositionString] == nil then
+            local chunk = chunkObject:new(chunkPosition)
+            worldFunctions.generateTerrain(chunk)
+            isChunkGenerated[chunk.chunkPosition:__tostring()] = true
+            universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
+          else
+            local chunk = global.loadChunk(universeObject,chunkPosition)
+            isChunkGenerated[chunk.chunkPosition:__tostring()] = true
+            universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk          
+          end
         end
       end
     end 

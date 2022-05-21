@@ -27,7 +27,10 @@ kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
 kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown"}
 function global.initializeGame()
   local sprites = love.filesystem.getDirectoryItems("/sprites")
-  global.chunkFiles = love.filesystem.getDirectoryItems("/chunks/")
+  global.chunkFiles = love.filesystem.getDirectoryItems("/0/chunks/")
+  for i,chunk in pairs(global.chunkFiles) do
+    global.chunkFiles[chunk] = 1
+  end
   classFactory.init()
   for index,sprite in pairs(sprites) do
     local spriteSlot = tonumber(string.sub(sprite,1,4))
@@ -39,7 +42,8 @@ function global.switchUniverse(universe)
   global.chunkFiles = love.filesystem.getDirectoryItems(universe.index.."/chunks/")
 end
 function global.saveChunk(universe,chunk)
-  local savedChunk = {["objects"]={},["position"]=chunk.chunkPosition:__tostring()}
+  --could couple multiple objects into one position, if save filesize becomes an issue.
+  local savedChunk = {["objects"]={}}
   for i,object in pairs(chunk.objects) do
     local objectData = {}
     for dataType,data in pairs(object) do
@@ -47,15 +51,32 @@ function global.saveChunk(universe,chunk)
         table.insert(objectData,{[dataType]=data})
       end
     end
-    local compressedObject = {devname=object.devname,data=flags,position=object.position}
+    print(object.position)
+    local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
     table.insert(savedChunk.objects,compressedObject)
   end
   love.filesystem.createDirectory(universe.index.."/chunks/")
-  local file = love.filesystem.newFile(savedChunk.position)
-  love.filesystem.write(universe.index.."/chunks/"..savedChunk.position,lunajson.encode(savedChunk))
-  table.insert(global.chunkFiles,savedChunk.position)
+  local file = love.filesystem.newFile(chunk.chunkPosition:__tostring())
+  love.filesystem.write(universe.index.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
+  global.chunkFiles[chunk.chunkPosition:__tostring()] = 1
 end
-function global.loadChunk(chunk)
+function global.loadChunk(universe,chunkPosition)
+  local chunkData = love.filesystem.read(universe.index.."/chunks/"..chunkPosition:__tostring())
+  local chunk = chunkObject:new(chunkPosition)
+  chunkData = lunajson.decode(chunkData)
+  if chunkData ~= nil then
+    for i,value in pairs(chunkData) do
+      for i,object in pairs(value) do
+        local newObject = classFactory.getObject(object.devname)
+        if object.position ~= nil then
+          newObject.position = vector(object.position[1],object.position[2],object.position[3])
+        end
+        print(newObject.devname,newObject.position)
+        table.insert(chunk.objects,newObject)
+      end
+    end
+  end
+  return chunk
 end
 function global.saveGame()
 end
