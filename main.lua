@@ -29,7 +29,6 @@ function love.load()
   tick.framerate = 60
   global.initializeGame()
 	Scene.Load(FIRST_SCENE)
-  print(classFactory.getObject("ground").renderLayer)
 end
 
 -- rewrote run function to handle love and scene functions in a "clean" way

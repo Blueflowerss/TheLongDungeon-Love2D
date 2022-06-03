@@ -17,7 +17,7 @@ function classFactory.init()
     ["door"]={["state"]=false,["spriteTrue"]=1,["spriteFalse"]=1},
     ["sign"]={["text"]=""},
     ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""},
-    ["floor"]={["renderLayer"]=299}
+    ["floor"]={["renderLayer"]=0}
     
 }
   --get blueprint json files
@@ -35,12 +35,13 @@ function classFactory.init()
       table.insert(objects,item)
     end
   end
+  
   --turn objects into actual in-game objects
   for objectIndex,object in pairs(objects) do
     local o = {}
     o.flags = object.flags 
-    o.interactions = {}
-    for _,flag in pairs(o.flags) do
+    interactions = {}
+    for flag,_ in pairs(o.flags) do
       if flagDefinitions[flag] then
         definition = flagDefinitions[flag] 
         --add attributes indicated by object's flags
