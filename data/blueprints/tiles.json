@@ -1,5 +1,4 @@
-[{"data":{"devname":"ground","displayname":"Ground","sprite":401},"flags":{"tile":true,"floor":true}},
-{"data":{"devname":"wall","displayname":"Wall","sprite":500},"flags":{"tile":true,"blocks":true,"floor":true}},
-{"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6},"flags":{"tile":true,"floor":true}}
+[{"data":{"devname":"ground","displayname":"Ground","sprite":401,"renderLayer":0},"flags":{"tile":true,"floor":true}},
+{"data":{"devname":"wall","displayname":"Wall","sprite":500},"renderLayer":1,"flags":{"tile":true,"blocks":true,"floor":true}},
+{"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6,"renderLayer":0},"flags":{"tile":true,"floor":true}}
 
-]

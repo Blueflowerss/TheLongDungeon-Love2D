@@ -71,7 +71,6 @@ function global.loadChunk(universe,chunkPosition)
         if object.position ~= nil then
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end
-        print(newObject.devname,newObject.position)
         table.insert(chunk.objects,newObject)
       end
     end

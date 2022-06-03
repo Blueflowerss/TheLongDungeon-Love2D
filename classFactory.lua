@@ -16,7 +16,9 @@ function classFactory.init()
     ["furniture"]={["position"]=vector(0,0),["sprite"]=1},
     ["door"]={["state"]=false,["spriteTrue"]=1,["spriteFalse"]=1},
     ["sign"]={["text"]=""},
-    ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""}
+    ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""},
+    ["floor"]={["renderLayer"]=299}
+    
 }
   --get blueprint json files
   local workingDirectory = love.filesystem.getWorkingDirectory()
