@@ -19,7 +19,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
         if isChunkGenerated[chunkPositionString] == nil then
           if global.chunkFiles[chunkPositionString] == nil then
             local chunk = chunkObject:new(chunkPosition)
-            worldFunctions.generateTerrain(chunk)
+            worldFunctions.generateTerrain(chunk,universeObject)
             isChunkGenerated[chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
@@ -41,15 +41,27 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
       if chunk.altered then
         global.saveChunk(universeObject,chunk)
       end
-      for i,tile in pairs(chunk.objects) do
-        isTileGenerated[tile.position:__tostring()] = nil
+      for x = 0,global.chunkSize do
+        for y = 0,global.chunkSize do
+          for z = 0,global.height do
+            local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)+vector(x,y,z)
+            local listPosition =universeObject.collisionMap[position:__tostring()]
+            if listPosition ~= nil then
+              for i,object in pairs(listPosition) do
+                object.removed = true
+              end
+              isTileGenerated[position:__tostring()] = nil
+            end
+            
+          end
+        end
       end
-      
     end
+    universeObject.chunks[chunk.chunkPosition:__tostring()] = nil
   end
   universeObject.chunks = chunksToKeep
 end
-function worldFunctions.generateTerrain(chunk) 
+function worldFunctions.generateTerrain(chunk,universeObject) 
     local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
@@ -62,7 +74,7 @@ function worldFunctions.generateTerrain(chunk)
               if tilePosition.z == height then tileType = "ground" else tileType="wall" end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
-              table.insert(chunk.objects,tile) 
+              table.insert(universeObject.objects,tile) 
               isTileGenerated[tilePosition:__tostring()] = true
             end
           end

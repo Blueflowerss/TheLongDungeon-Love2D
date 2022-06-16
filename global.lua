@@ -44,7 +44,7 @@ end
 function global.saveChunk(universe,chunk)
   --could couple multiple objects into one position, if save filesize becomes an issue.
   local savedChunk = {["objects"]={}}
-  for i,object in pairs(chunk.objects) do
+  for i,object in pairs(universe.objects) do
     local objectData = {}
     for dataType,data in pairs(object) do
       if global.saveableData[dataType] ~= nil then
@@ -71,7 +71,7 @@ function global.loadChunk(universe,chunkPosition)
         if object.position ~= nil then
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end
-        table.insert(chunk.objects,newObject)
+        table.insert(universe.objects,newObject)
       end
     end
   end

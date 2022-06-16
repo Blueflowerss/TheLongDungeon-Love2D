@@ -17,7 +17,7 @@ skyValue2 = {(width/66.6),(height/66.6)}
 print(inspect(skyValue2))
 function s.load()
   love.keyboard.setKeyRepeat(true)
-  global.multiverse[global.currentUniverse]:processCollisions()
+  processCollisions(global.multiverse[global.currentUniverse])
   global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
 end
 function s.unload()
@@ -88,7 +88,7 @@ function s.update(dt)
     
   end
   for i,universe in pairs(global.multiverse) do
-    universe:processCollisions()
+    processCollisions(universe)
   end
   for i,actor in pairs(global.multiverse[global.currentUniverse].actors) do
     actor:update(dt)

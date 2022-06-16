@@ -51,11 +51,11 @@ function input:processInput(key)
         end
       end
       if not obstructed and universe.chunks[chunk.chunkPosition:__tostring()] then
-        table.insert(chunk.objects,object)
+        table.insert(universe.objects,object)
         if not topObstructed and constructRoof then
           local object = classFactory.getObject("floor")
           object.position = placedObjectPos+vector(0,0,1)
-          table.insert(chunk.objects,object)
+          table.insert(universe.objects,object)
         end
         chunk.altered = true
       end
