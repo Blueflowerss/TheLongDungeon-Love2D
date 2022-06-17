@@ -15,6 +15,9 @@ local saveTimer = 0
 skyValue1 = {(width/50),(height/50)}
 skyValue2 = {(width/66.6),(height/66.6)}
 print(inspect(skyValue2))
+function s.quit()
+  print("exiting")
+end
 function s.load()
   love.keyboard.setKeyRepeat(true)
   processCollisions(global.multiverse[global.currentUniverse])

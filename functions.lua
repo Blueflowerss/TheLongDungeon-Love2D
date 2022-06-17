@@ -82,6 +82,7 @@ function table.length(table)
 end
 local createAndInsertTable = functions.createAndInsertTable
 function processCollisions(universe)
+  universe.collisionMap = {}
   local storedObjects = {}
   for objectIndex,object in pairs(universe.objects) do
     if object.removed == nil then

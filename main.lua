@@ -32,6 +32,11 @@ function love.load()
 end
 
 -- rewrote run function to handle love and scene functions in a "clean" way
+function love.quit()
+  if Scene.quit then
+    Scene.quit()
+  end
+end
 function love.run()
 	if love.load then
 		love.load(love.arg.parseGameArguments(arg), arg)

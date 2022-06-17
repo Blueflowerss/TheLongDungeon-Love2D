@@ -6,7 +6,8 @@ function input:processInput(key)
   local modes = {
     MOVE = 1,
     INTERACT = 2,
-    BUILD = 3
+    BUILD = 3,
+    DESTROY = 4
   }
   inputCurrentMode = inputCurrentMode or modes.MOVE
   inputDirection = inputDirection or vector(0,0,0)
@@ -17,40 +18,51 @@ function input:processInput(key)
     function interactWithObject()
       inputCurrentMode = modes.MOVE
     end
+    function destroyEntity()
+      local universe = global.multiverse[global.currentUniverse]
+      local placedObjectPos = actor.position+inputDirection
+      local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
+      if listPosition ~= nil then
+        for i,v in pairs(listPosition) do 
+          print(v.devname,i)
+        end
+      end
+
+      inputCurrentMode = modes.MOVE
+    end
     function placeEntity()
+
       local universe = global.multiverse[global.currentUniverse]
       local placedObjectPos = actor.position+inputDirection
       local objectName = classFactory.finishedObjectsIndexTable[(global.buildSlot%classFactory.databaseLength)+1]
       local object = classFactory.getObject(objectName)
       object.position = placedObjectPos
+      local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
       local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):ceil()
       local chunk = universe.chunks[chunkPos:__tostring()]
-      local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
       local obstructed = false
       local topObstructed = false
       local constructRoof = false
       if object.flags["blocks"] then
         constructRoof = true
       end
-      if chunk ~= nil then
-        if listPosition ~= nil then
-          for i,v in pairs(listPosition) do
-            if v.flags["blocks"] then
-              break
-            end
+      if listPosition ~= nil then
+        for i,v in pairs(listPosition) do
+          if v.flags["blocks"] then
+            break
           end
-          listPosition = universe.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
-          if listPosition ~= nil and constructRoof then
-            for i,v in pairs(listPosition) do
-              if v.flags["floor"] or v.flags["blocks"] then
-                  topObstructed = true
-                  break
-              end
+        end
+        listPosition = universe.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
+        if listPosition ~= nil and constructRoof then
+          for i,v in pairs(listPosition) do
+            if v.flags["floor"] or v.flags["blocks"] then
+                topObstructed = true
+                break
             end
           end
         end
       end
-      if not obstructed and universe.chunks[chunk.chunkPosition:__tostring()] then
+      if not obstructed then
         table.insert(universe.objects,object)
         if not topObstructed and constructRoof then
           local object = classFactory.getObject("floor")
@@ -59,10 +71,9 @@ function input:processInput(key)
         end
         chunk.altered = true
       end
-
       inputCurrentMode = modes.MOVE
     end
-    local actions={[modes.MOVE]=moveEntity,[modes.INTERACT]=interactWithObject,[modes.BUILD]=placeEntity}
+    local actions={[modes.MOVE]=moveEntity,[modes.INTERACT]=interactWithObject,[modes.BUILD]=placeEntity,[modes.DESTROY]=destroyEntity}
     actions[inputCurrentMode]()
   end
   function moveleft()
@@ -112,6 +123,9 @@ function input:processInput(key)
   function placeObject()
     inputCurrentMode = modes.BUILD
   end
+  function destroyObject()
+    inputCurrentMode = modes.DESTROY
+  end
   function debug()
     print((actor.position/global.chunkSize):floor())
     print(inspect(global.multiverse[global.currentUniverse].chunks))
@@ -126,7 +140,7 @@ function input:processInput(key)
   end
   local controls = {["moveleft"]=moveleft,["moveright"]=moveright,["moveup"]=moveup,["movedown"]=movedown,
     ["stepforward"]=stepforward,["stepback"]=stepback,climbup=climbup,climbdown=climbdown,debug=debug,
-    build=placeObject,moverightup=moverightup,moverightdown=moverightdown,moveleftup=moveleftup,moveleftdown=moveleftdown,buildSlotLeft=buildSlotLeft,buildSlotRight=buildSlotRight}
+    build=placeObject,moverightup=moverightup,moverightdown=moverightdown,moveleftup=moveleftup,moveleftdown=moveleftdown,buildSlotLeft=buildSlotLeft,buildSlotRight=buildSlotRight,destroy = destroyObject}
   if keys[key] ~= nil then
     controls[keys[key]]()
   end
