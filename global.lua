@@ -7,7 +7,7 @@ global.chunkSize = 6
 global.height = 1
 global.heightMultiplier = 100
 global.chunkUnloadDistance = 4
-global.currentUniverse = 0
+global.currentUniverse = 2200
 global.currentActor = 0
 global.buildSlot = 0
 global.buildSlotName = ""
@@ -26,9 +26,10 @@ g="debug",
 b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",
 kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
 kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown"}
+
 function global.initializeGame()
   local sprites = love.filesystem.getDirectoryItems("/sprites")
-  global.chunkFiles = love.filesystem.getDirectoryItems("/0/chunks/")
+  global.chunkFiles = love.filesystem.getDirectoryItems("/"..global.currentUniverse.."/chunks/")
   for i,chunk in pairs(global.chunkFiles) do
     global.chunkFiles[chunk] = 1
   end
@@ -37,10 +38,21 @@ function global.initializeGame()
     local spriteSlot = tonumber(string.sub(sprite,1,4))
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
-  global.multiverse[0] = universe:new(0)
+  global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
 end
-function global.switchUniverse(universe)
-  global.chunkFiles = love.filesystem.getDirectoryItems(universe.index.."/chunks/")
+
+function global.switchUniverse(originalUniverse,destinationUniverse)
+  local originalUniverseObject = global.multiverse[originalUniverse]
+  if global.multiverse[destinationUniverse] == nil then
+    global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
+  end
+  local destinationUniverseObject = global.multiverse[destinationUniverse]
+  local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..destinationUniverseObject.index.."/chunks/")
+  if dirOk then
+    global.chunkFiles = love.filesystem.getDirectoryItems(destinationUniverseObject.index.."/chunks/")
+  end
+  
 end
+
 function global.saveGame()
 end

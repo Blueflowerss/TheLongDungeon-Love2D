@@ -33,7 +33,7 @@ function s.draw()
   local resolution = vector(height,width)
   local renderStack = {}
   cameraOffset = player.position *-global.spriteDistancing * global.spriteScaling
-  local collisionMap = global.multiverse[0].collisionMap
+  local collisionMap = global.multiverse[global.currentUniverse].collisionMap
   local backroundCanvas = love.graphics.newCanvas(resolution.x*2,resolution.y*2)
   love.graphics.setCanvas(backroundCanvas)
   love.graphics.push()

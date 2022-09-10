@@ -8,7 +8,8 @@ local generateTerrainNoise = functions.generateTerrainNoise
 local normalize = functions.normalize
 local isTileGenerated = {}
 local isChunkGenerated = {}
-function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject) 
+function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject)
+  --centerOfRemoval is player's position 
   local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
   local height = global.height
   for x=-range,range do
@@ -23,7 +24,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
             isChunkGenerated[chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
-            local chunk = loadChunk(universeObject,chunkPosition)
+            local chunk = worldFunctions.loadChunk(universeObject,chunkPosition)
             isChunkGenerated[chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk          
           end
@@ -39,7 +40,8 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     else
       isChunkGenerated[chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
-        global.saveChunk(universeObject,chunk)
+
+        worldFunctions.saveChunk(universeObject,chunk)
       end
       for x = 0,global.chunkSize do
         for y = 0,global.chunkSize do
@@ -61,39 +63,30 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
   end
   universeObject.chunks = chunksToKeep
 end
-function saveChunk(universe,chunk)
+function worldFunctions.saveChunk(universe,chunk)
+  -- POSITION FIELD IS PREVENTING OBJECTS FROM SAVING, SOMETHING ABOUT IT NOT ENCOMPASSING THE OBJECTS
   --could couple multiple objects into one position, if save filesize becomes an issue.
   local savedChunk = {["objects"]={}}
-  for x = 0,global.chunkSize do
-    for y = 0,global.chunkSize do
-      for z = 0,global.chunkSize do
-        local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)+vector(x,y,z)
-        local listPosition =universe.collisionMap[position:__tostring()]
-        if listPosition ~= nil then
-          for i,object in pairs(listPosition) do
-            local objectData = {}
-            for dataType,data in pairs(object) do
-              if global.saveableData[dataType] ~= nil then
-                table.insert(objectData,{[dataType]=data})
-              end
-            end
-            local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
-            table.insert(savedChunk.objects,compressedObject)
-          end
-        end
-
+  for i,object in pairs(chunk.objects) do
+    print(object.devname)
+    local objectData = {}
+    for dataType,data in pairs(object) do
+      if global.saveableData[dataType] == 0 then
+        table.insert(objectData,{[dataType]=data})
       end
     end
+    local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
+    table.insert(savedChunk.objects,compressedObject)
   end
   love.filesystem.createDirectory(universe.index.."/chunks/")
   local file = love.filesystem.newFile(chunk.chunkPosition:__tostring())
   love.filesystem.write(universe.index.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
   global.chunkFiles[chunk.chunkPosition:__tostring()] = 1
 end
-function loadChunk(universe,chunkPosition)
+function worldFunctions.loadChunk(universe,chunkPosition)
   local chunkData = love.filesystem.read(universe.index.."/chunks/"..chunkPosition:__tostring())
   local chunk = chunkObject:new(chunkPosition)
-  chunkData = lunajson.decode(chunkData)
+  local chunkData = lunajson.decode(chunkData)
   if chunkData ~= nil then
     for i,value in pairs(chunkData) do
       for i,object in pairs(value) do
@@ -102,6 +95,7 @@ function loadChunk(universe,chunkPosition)
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end
         table.insert(universe.objects,newObject)
+        table.insert(chunk.objects,newObject)
         isTileGenerated[newObject.position:__tostring()] = true
       end
     end
@@ -121,7 +115,10 @@ function worldFunctions.generateTerrain(chunk,universeObject)
               if tilePosition.z == height then tileType = "ground" else tileType="wall" end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
-              table.insert(universeObject.objects,tile) 
+              local debugTile = classFactory.getObject("floor")
+              debugTile.position = position
+              table.insert(chunk.objects,tile) 
+              table.insert(universeObject.objects,tile)  
               isTileGenerated[tilePosition:__tostring()] = true
             end
           end

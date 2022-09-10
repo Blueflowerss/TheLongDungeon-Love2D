@@ -38,7 +38,7 @@ function input:processInput(key)
       local object = classFactory.getObject(objectName)
       object.position = placedObjectPos
       local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
-      local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):ceil()
+      local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):floor()
       local chunk = universe.chunks[chunkPos:__tostring()]
       local obstructed = false
       local topObstructed = false
@@ -64,10 +64,15 @@ function input:processInput(key)
       end
       if not obstructed then
         table.insert(universe.objects,object)
+        table.insert(chunk.objects,object)
         if not topObstructed and constructRoof then
           local object = classFactory.getObject("floor")
           object.position = placedObjectPos+vector(0,0,1)
+          local aboveChunkPos = vector(object.position.x/global.chunkSize,object.position.y/global.chunkSize,object.position.z/global.height):floor()
+          local aboveChunk = universe.chunks[aboveChunkPos:__tostring()]
+          table.insert(chunk.objects,object)
           table.insert(universe.objects,object)
+          aboveChunk.altered = true
         end
         chunk.altered = true
       end
@@ -117,8 +122,10 @@ function input:processInput(key)
     processInput()
   end
   function stepforward()
+    global.switchUniverse(global.currentUniverse,global.currentUniverse+1)
   end
   function stepback()
+    global.switchUniverse(global.currentUniverse,global.currentUniverse-1)
   end
   function placeObject()
     inputCurrentMode = modes.BUILD
