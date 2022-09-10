@@ -14,23 +14,19 @@ local ceil = math.ceil
 local saveTimer = 0
 skyValue1 = {(width/50),(height/50)}
 skyValue2 = {(width/66.6),(height/66.6)}
-print(inspect(skyValue2))
 function s.quit()
   for i,chunk in pairs(global.multiverse[global.currentUniverse].chunks) do
     worldFunctions.saveChunk(global.multiverse[global.currentUniverse],chunk)
   end
   global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
-  if exists(love.filesystem.getSaveDirectory().."/".."playerData.json") then
-    love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
-  else
-    love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
-  end
+  love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
   print("exiting")
 end
 function s.load()
   love.keyboard.setKeyRepeat(true)
+  global.cameraPosition = global.multiverse[global.currentUniverse].actors[global.currentActor].position
   processCollisions(global.multiverse[global.currentUniverse])
-  global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
+  
 end
 function s.unload()
 
@@ -41,7 +37,10 @@ function s.draw()
   local height,width = love.graphics.getDimensions()
   local resolution = vector(height,width)
   local renderStack = {}
-  cameraOffset = player.position *-global.spriteDistancing * global.spriteScaling
+  if player then
+    global.cameraPosition = player.position
+  end
+  cameraOffset = global.cameraPosition*-global.spriteDistancing * global.spriteScaling
   local collisionMap = global.multiverse[global.currentUniverse].collisionMap
   local backroundCanvas = love.graphics.newCanvas(resolution.x*2,resolution.y*2)
   love.graphics.setCanvas(backroundCanvas)
@@ -49,16 +48,16 @@ function s.draw()
   love.graphics.scale(2)
   love.graphics.setColor({0,1.5,1})
   
-  for x=-1,resolution.x/32 do
-    for y=-1,resolution.y/32 do
-      local mask = player.position+vector(x,y)-vector(skyValue2[1] ,skyValue2[2])
-      mask = mask:ceil()
-      if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
-          love.graphics.rectangle("fill",ceil((x*32)+skyValue1[1]),ceil((y*32)+skyValue1[2]),32,32)
-      end
-
-    end
-  end
+--  for x=-1,resolution.x/32 do
+--    for y=-1,resolution.y/32 do
+--      local mask = player.position+vector(x,y)-vector(skyValue2[1] ,skyValue2[2])
+--      mask = mask:ceil()
+--      if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
+--          love.graphics.rectangle("fill",ceil((x*32)+skyValue1[1]),ceil((y*32)+skyValue1[2]),32,32)
+--      end
+--
+--    end
+--  end
   love.graphics.setColor({255,255,255})
   love.graphics.pop()
   love.graphics.setCanvas()
@@ -79,7 +78,7 @@ function s.draw()
       end
     end
   end
-  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,player.position:__tostring()),10,10})
+  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,global.cameraPosition:__tostring()),10,10})
   createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,global.buildSlotName),10,30})
   reverseTable(renderStack)
   love.graphics.scale(global.spriteScaling)

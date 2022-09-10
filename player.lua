@@ -13,6 +13,7 @@ function playerObject:new(spawnVector)
       o.walkingTo = o.position+moveVector
     end
     function o:update(dt)
+      --global.cameraPosition = o.position
       local objectList = global.multiverse[global.currentUniverse].collisionMap
       local tile =  objectList[o.position:__tostring()]
       local falling = true
@@ -25,6 +26,9 @@ function playerObject:new(spawnVector)
       if falling then
         o.position = o.position-o.gravity
         o.walkingTo = o.position
+        if o.position.z < 0 then
+          o.position.z = 100
+        end
       end
       if o.position ~= o.walkingTo then
         local direction = ((o.walkingTo-o.position):norm()):ceil()

@@ -19,6 +19,7 @@ global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
     ["position"]=0,["state"]=0,["text"]=""
 }
+global.cameraPosition = vector(200,200)
 global.playerData = {
   position=vector(0,0):__tostring(),
   world=global.currentUniverse
@@ -42,6 +43,7 @@ function global.initializeGame()
     global.playerSpawnPoint = playerData.position
     global.currentUniverse = playerData.world
   end
+  
     local sprites = love.filesystem.getDirectoryItems("/sprites")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..global.currentUniverse.."/chunks/")
   for i,chunk in pairs(global.chunkFiles) do
@@ -53,6 +55,7 @@ function global.initializeGame()
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
+  global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
 end
 
 function global.switchUniverse(originalUniverse,destinationUniverse)
@@ -61,9 +64,25 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
   local destinationUniverseObject = global.multiverse[destinationUniverse]
-  local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..destinationUniverseObject.index.."/chunks/")
+  local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   if dirOk then
-    global.chunkFiles = love.filesystem.getDirectoryItems(destinationUniverseObject.index.."/chunks/")
+    for i,v in pairs(global.multiverse) do
+      print(i)
+    end
+    global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
+    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
+    local player = originalUniverseObject.actors[global.currentActor]
+    destinationUniverseObject.actors[global.currentActor] = player
+    table.remove(originalUniverseObject.actors,global.currentActor)
+    global.currentUniverse = destinationUniverse
+  else
+    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
+    global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
+    local player = originalUniverseObject.actors[global.currentActor]
+    destinationUniverseObject.actors[global.currentActor] = player
+    table.remove(originalUniverseObject.actors,global.currentActor)
+    global.currentUniverse = destinationUniverse
+
   end
   
 end

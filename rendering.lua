@@ -14,7 +14,7 @@ function generateVisible()
   visible = {}
 	
 local isTransparent = function(x,y)
-    local position = vector(x,y,player.position.z):__tostring()
+    local position = vector(x,y,global.cameraPosition.z):__tostring()
     local blocked = false
     if collisionMap[position] then
       for _,object in pairs(collisionMap[position]) do
@@ -37,11 +37,11 @@ local isTransparent = function(x,y)
 			return 
 		end
 		
-		visible[vector(x,y,player.position.z):__tostring()]    = visible[vector(x,y,player.position.z):__tostring()] or {}
-		visible[vector(x,y,player.position.z):__tostring()] = 1
+		visible[vector(x,y,global.cameraPosition.z):__tostring()]    = visible[vector(x,y,global.cameraPosition.z):__tostring()] or {}
+		visible[vector(x,y,global.cameraPosition.z):__tostring()] = 1
 	end
 		
-	fov(player.position.x,player.position.y,radius,isTransparent,onVisible,math.rad(angle-angle_size/2),math.rad(angle+angle_size/2),perm)
+	fov(global.cameraPosition.x,global.cameraPosition.y,radius,isTransparent,onVisible,math.rad(angle-angle_size/2),math.rad(angle+angle_size/2),perm)
 
 end
 colors = {}

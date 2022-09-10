@@ -68,7 +68,6 @@ function worldFunctions.saveChunk(universe,chunk)
   --could couple multiple objects into one position, if save filesize becomes an issue.
   local savedChunk = {["objects"]={}}
   for i,object in pairs(chunk.objects) do
-    print(object.devname)
     local objectData = {}
     for dataType,data in pairs(object) do
       if global.saveableData[dataType] == 0 then
