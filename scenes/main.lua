@@ -16,6 +16,12 @@ skyValue1 = {(width/50),(height/50)}
 skyValue2 = {(width/66.6),(height/66.6)}
 print(inspect(skyValue2))
 function s.quit()
+  global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
+  if exists(love.filesystem.getSaveDirectory().."/".."playerData.json") then
+    love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
+  else
+    love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
+  end
   print("exiting")
 end
 function s.load()

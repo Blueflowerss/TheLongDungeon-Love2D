@@ -19,16 +19,30 @@ global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
     ["position"]=0,["state"]=0,["text"]=""
 }
+global.playerData = {
+  position=vector(0,0):__tostring(),
+  world=global.currentUniverse
+}
 global.chunkFiles = {}
 global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
 w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",
 g="debug",
 b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",
 kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
-kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown"}
+kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
+escape="escape"}
 
 function global.initializeGame()
-  local sprites = love.filesystem.getDirectoryItems("/sprites")
+  local playerData = love.filesystem.read("playerData.json")
+  if playerData ~= nil then
+    playerData = lunajson.decode(playerData)
+    if playerData.position ~= nil then
+      playerData.position = vector(playerData.position[1],playerData.position[2],playerData.position[3])
+    end
+    global.playerSpawnPoint = playerData.position
+    global.currentUniverse = playerData.world
+  end
+    local sprites = love.filesystem.getDirectoryItems("/sprites")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..global.currentUniverse.."/chunks/")
   for i,chunk in pairs(global.chunkFiles) do
     global.chunkFiles[chunk] = 1
