@@ -6,8 +6,8 @@ local max = math.max
 local clamp = functions.clamp
 local generateTerrainNoise = functions.generateTerrainNoise
 local normalize = functions.normalize
-local isTileGenerated = {}
-local isChunkGenerated = {}
+isTileGenerated = {}
+isChunkGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject)
   --centerOfRemoval is player's position 
   local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
@@ -43,21 +43,11 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
 
         worldFunctions.saveChunk(universeObject,chunk)
       end
-      for x = 0,global.chunkSize do
-        for y = 0,global.chunkSize do
-          for z = 0,global.height do
-            local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)+vector(x,y,z)
-            local listPosition =universeObject.collisionMap[position:__tostring()]
-            if listPosition ~= nil then
-              for i,object in pairs(listPosition) do
-                object.removed = true
-              end
-              isTileGenerated[position:__tostring()] = nil
-            end
-            
-          end
-        end
+      for i,object in pairs(chunk.objects) do
+          object.removed = true
+          isTileGenerated[object.position:__tostring()] = nil
       end
+      
     end
     universeObject.chunks[chunk.chunkPosition:__tostring()] = nil
   end
@@ -85,8 +75,8 @@ end
 function worldFunctions.loadChunk(universe,chunkPosition)
   local chunkData = love.filesystem.read(universe.index.."/chunks/"..chunkPosition:__tostring())
   local chunk = chunkObject:new(chunkPosition)
-  local chunkData = lunajson.decode(chunkData)
   if chunkData ~= nil then
+    local chunkData = lunajson.decode(chunkData)
     for i,value in pairs(chunkData) do
       for i,object in pairs(value) do
         local newObject = classFactory.getObject(object.devname)
@@ -103,24 +93,54 @@ function worldFunctions.loadChunk(universe,chunkPosition)
 end
 function worldFunctions.generateTerrain(chunk,universeObject) 
     local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
+    local blocksWhichNeedRamps = {}
+    local cachedNoise = {}
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
         local height = generateTerrainNoise(3,x+position.x,y+position.y,global.currentUniverse)*global.heightMultiplier
         height = ceil(height)
+        cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do
             local tilePosition = position+vector(x,y,z)
             if isTileGenerated[tilePosition:__tostring()] == nil and tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
-              if tilePosition.z == height then tileType = "ground" else tileType="wall" end
+              if tilePosition.z == height then tileType = "ground" else tileType="wall"
+              table.insert(blocksWhichNeedRamps,tilePosition)
+              end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
-              local debugTile = classFactory.getObject("floor")
-              debugTile.position = position
               table.insert(chunk.objects,tile) 
               table.insert(universeObject.objects,tile)  
               isTileGenerated[tilePosition:__tostring()] = true
             end
           end
+        
       end
     end
+    for i,block in pairs(blocksWhichNeedRamps) do
+      --ramp creation
+      for x=-1,1 do
+        for y=-1,1 do
+          if x ~= 0 and y ~= 0 then
+          height = cachedNoise[vector(block.x,block.y):__tostring()]
+          neighborHeight = cachedNoise[vector(block.x+x,block.y+y):__tostring()]
+          if height == nil then
+            height = generateTerrainNoise(3,block.x,block.y,global.currentUniverse)*global.heightMultiplier
+            height = ceil(height)
+          end
+          if neighborHeight == nil then
+            neighborHeight = generateTerrainNoise(3,block.x+x,block.y+y,global.currentUniverse)*global.heightMultiplier
+            neighborHeight = ceil(neighborHeight)
+          end
+          if neighborHeight == height-1 and isTileGenerated[(block+vector(x,y)):__tostring()] == nil then
+            local tile = classFactory.getObject("ramp")
+            tile.position = block+vector(x,y)
+            table.insert(chunk.objects,tile) 
+            table.insert(universeObject.objects,tile)  
+            isTileGenerated[tile.position:__tostring()] = true
+          end
+        end
+      end
+    end
+  end
 end

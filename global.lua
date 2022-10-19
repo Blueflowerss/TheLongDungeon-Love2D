@@ -4,7 +4,7 @@ global.noiseSettings = {}
 global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
 global.chunkSize = 6
-global.height = 1
+global.height = 2
 global.heightMultiplier = 100
 global.chunkUnloadDistance = 4
 global.currentUniverse = 2200
@@ -66,25 +66,32 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
   local destinationUniverseObject = global.multiverse[destinationUniverse]
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   if dirOk then
-    for i,v in pairs(global.multiverse) do
-      print(i)
-    end
     global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
     local player = originalUniverseObject.actors[global.currentActor]
     destinationUniverseObject.actors[global.currentActor] = player
+    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
     table.remove(originalUniverseObject.actors,global.currentActor)
     global.currentUniverse = destinationUniverse
   else
-    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
     global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
     local player = originalUniverseObject.actors[global.currentActor]
     destinationUniverseObject.actors[global.currentActor] = player
+    player.position = player.position + vector(0,0,1)
+    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
     table.remove(originalUniverseObject.actors,global.currentActor)
     global.currentUniverse = destinationUniverse
-
-  end
   
+  isChunkGenerated = {}
+  isTileGenerated = {}  
+  for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
+      if chunk.altered then
+        worldFunctions.saveChunk(originalUniverseObject,chunk)
+      end
+      for i,object in pairs(chunk.objects) do
+        object.removed = true
+      end
+  end
+end  
 end
 
 function global.saveGame()

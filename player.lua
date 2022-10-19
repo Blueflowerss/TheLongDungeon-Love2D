@@ -46,29 +46,38 @@ function playerObject:new(spawnVector)
         if not blocked then
           o.position = o.position + direction
         else
-          --walking up hills
-          local ceilingBlocked = false
-          local tile = objectList[(o.position+vector(0,0,1)):__tostring()]
-          if tile then
-            for _,object in pairs(tile) do
-              if object.flags["floor"] or object.flags["blocks"] then
-                ceilingBlocked = true
-                break
-              end
+          local onRamp = false
+          for _,object in pairs(tile) do
+            if object.flags["ramp"] then
+              onRamp = true
+              break
             end
           end
-          if not ceilingBlocked then
-            local blockedByHigherWall = false
-            tile = objectList[(o.position+direction+vector(0,0,1)):__tostring()]
+            if onRamp then
+            --walking up hills
+            local ceilingBlocked = false
+            local tile = objectList[(o.position+vector(0,0,1)):__tostring()]
             if tile then
               for _,object in pairs(tile) do
-                if object.flags["blocks"] then
-                  blockedByHigherWall = true
+                if object.flags["floor"] or object.flags["blocks"] then
+                  ceilingBlocked = true
                   break
                 end
               end
-              if not blockedByHigherWall then
-                o.position = (o.position+direction+vector(0,0,1))
+            end
+            if not ceilingBlocked then
+              local blockedByHigherWall = false
+              tile = objectList[(o.position+direction+vector(0,0,1)):__tostring()]
+              if tile then
+                for _,object in pairs(tile) do
+                  if object.flags["blocks"] then
+                    blockedByHigherWall = true
+                    break
+                  end
+                end
+                if not blockedByHigherWall then
+                  o.position = (o.position+direction+vector(0,0,1))
+                end
               end
             end
           end
