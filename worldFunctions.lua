@@ -7,6 +7,7 @@ local clamp = functions.clamp
 local generateTerrainNoise = functions.generateTerrainNoise
 local normalize = functions.normalize
 isTileGenerated = {}
+isRampGenerated = {}
 isChunkGenerated = {}
 function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject)
   --centerOfRemoval is player's position 
@@ -121,23 +122,15 @@ function worldFunctions.generateTerrain(chunk,universeObject)
       --ramp creation
       for x=-1,1 do
         for y=-1,1 do
-          if x ~= 0 and y ~= 0 then
+          if x + y ~= 0 then
           height = cachedNoise[vector(block.x,block.y):__tostring()]
           neighborHeight = cachedNoise[vector(block.x+x,block.y+y):__tostring()]
-          if height == nil then
-            height = generateTerrainNoise(3,block.x,block.y,global.currentUniverse)*global.heightMultiplier
-            height = ceil(height)
-          end
-          if neighborHeight == nil then
-            neighborHeight = generateTerrainNoise(3,block.x+x,block.y+y,global.currentUniverse)*global.heightMultiplier
-            neighborHeight = ceil(neighborHeight)
-          end
-          if neighborHeight == height-1 and isTileGenerated[(block+vector(x,y)):__tostring()] == nil then
+          if neighborHeight == height-1  and neighborHeight ~= nil and isRampGenerated[block:__tostring()] == nil then
             local tile = classFactory.getObject("ramp")
             tile.position = block+vector(x,y)
             table.insert(chunk.objects,tile) 
             table.insert(universeObject.objects,tile)  
-            isTileGenerated[tile.position:__tostring()] = true
+            isRampGenerated[tile.position:__tostring()] = true
           end
         end
       end
