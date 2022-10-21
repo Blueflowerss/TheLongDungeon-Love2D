@@ -123,7 +123,6 @@ function worldFunctions.generateTerrain(chunk,universeObject)
       --ramp creation
       for x=-1,1 do
         for y=-1,1 do
-          if abs(x) + abs(y) ~= 0 then
           height = cachedNoise[vector(block.x,block.y):__tostring()]
           neighborHeight = cachedNoise[vector(block.x+x,block.y+y):__tostring()]
           if neighborHeight == height-1  and neighborHeight ~= nil and isRampGenerated[block:__tostring()] == nil then
