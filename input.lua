@@ -134,8 +134,12 @@ function input:processInput(key)
     inputCurrentMode = modes.DESTROY
   end
   function debug()
-    print((actor.position/global.chunkSize):floor())
-    print(inspect(global.multiverse[global.currentUniverse].chunks))
+    if global.gravityToggle then
+      global.gravityToggle = false
+    else
+      global.gravityToggle = true
+    end
+    print(global.gravityToggle)
   end
   function buildSlotLeft()
     global.buildSlot = global.buildSlot + 1

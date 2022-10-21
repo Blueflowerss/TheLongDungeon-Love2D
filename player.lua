@@ -16,14 +16,14 @@ function playerObject:new(spawnVector)
       --global.cameraPosition = o.position
       local objectList = global.multiverse[global.currentUniverse].collisionMap
       local tile =  objectList[o.position:__tostring()]
-      local falling = true
+        local falling = true
       for _,object in pairs(tile) do
         if object.flags["floor"] then
           falling = false
           break
         end
       end
-      if falling then
+      if falling and global.gravityToggle then
         o.position = o.position-o.gravity
         o.walkingTo = o.position
         if o.position.z < 0 then

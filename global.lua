@@ -69,20 +69,22 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
     global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
     local player = originalUniverseObject.actors[global.currentActor]
     destinationUniverseObject.actors[global.currentActor] = player
-    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
-    table.remove(originalUniverseObject.actors,global.currentActor)
+    --hack to generate terrain because jesus it just doesn't work
+    destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)table.remove(originalUniverseObject.actors,global.currentActor)
     global.currentUniverse = destinationUniverse
   else
     global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
     local player = originalUniverseObject.actors[global.currentActor]
     destinationUniverseObject.actors[global.currentActor] = player
     player.position = player.position + vector(0,0,1)
-    worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,destinationUniverseObject)
+    --hack to generate terrain because jesus it just doesn't work
+    destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
     table.remove(originalUniverseObject.actors,global.currentActor)
     global.currentUniverse = destinationUniverse
   
   isChunkGenerated = {}
-  isTileGenerated = {}  
+  isTileGenerated = {} 
+  isRampGenerated = {}   
   for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
       if chunk.altered then
         worldFunctions.saveChunk(originalUniverseObject,chunk)
