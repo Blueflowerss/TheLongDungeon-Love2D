@@ -14,6 +14,11 @@ function playerObject:new(spawnVector)
     end
     function o:update(dt)
       --global.cameraPosition = o.position
+      local chunkPosition = (vector(o.position.x/global.chunkSize,o.position.y/global.chunkSize,o.position.z/global.height)):floor()
+      if o.playerLastChunk ~= chunkPosition then
+        worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse])
+        o.playerLastChunk = chunkPosition
+      end
       local objectList = global.multiverse[global.currentUniverse].collisionMap
       local tile =  objectList[o.position:__tostring()]
         local falling = true
@@ -23,7 +28,7 @@ function playerObject:new(spawnVector)
           break
         end
       end
-      if falling and global.gravityToggle then
+      if falling and not global.gravityToggle then
         o.position = o.position-o.gravity
         o.walkingTo = o.position
         if o.position.z < 0 then
@@ -46,13 +51,13 @@ function playerObject:new(spawnVector)
         if not blocked then
           o.position = o.position + direction
         else
-          local onRamp = false
-          for _,object in pairs(tile) do
-            if object.flags["ramp"] then
-              onRamp = true
-              break
-            end
-          end
+          local onRamp = true
+          --for _,object in pairs(tile) do
+          --  if object.flags["ramp"] then
+          --    onRamp = true
+          --    break
+          --  end
+          --end
             if onRamp then
             --walking up hills
             local ceilingBlocked = false
@@ -84,11 +89,7 @@ function playerObject:new(spawnVector)
         end
       end
       
-      local chunkPosition = (vector(o.position.x/global.chunkSize,o.position.y/global.chunkSize,o.position.z/global.height)):floor()
-      if o.playerLastChunk ~= chunkPosition then
-        worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse])
-        o.playerLastChunk = chunkPosition
-      end
+
     end
     return o
 end

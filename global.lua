@@ -19,19 +19,28 @@ global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
     ["position"]=0,["state"]=0,["text"]=""
 }
+global.gameScene = null
+global.scenes = {
+  GAMESCENE = "main",
+  SPACEMENU = "spaceMenu"
+}
 global.cameraPosition = vector(200,200)
 global.playerData = {
   position=vector(0,0):__tostring(),
   world=global.currentUniverse
 }
 global.chunkFiles = {}
-global.keyBindings = {["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
+global.keyBindings = {["GAMESCENE"]={["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
 w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",
 g="debug",
 b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",
 kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
 kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
-escape="escape"}
+escape="escape",
+m="spacemenu"},
+["SPACEMENU"]={
+m="exitmenu"
+}}
 
 function global.initializeGame()
   local playerData = love.filesystem.read("playerData.json")
@@ -65,36 +74,27 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
   end
   local destinationUniverseObject = global.multiverse[destinationUniverse]
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
-  if dirOk then
-    global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-    local player = originalUniverseObject.actors[global.currentActor]
-    destinationUniverseObject.actors[global.currentActor] = player
-    --hack to generate terrain because jesus it just doesn't work
-    destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)table.remove(originalUniverseObject.actors,global.currentActor)
-    global.currentUniverse = destinationUniverse
-  else
-    global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-    local player = originalUniverseObject.actors[global.currentActor]
-    destinationUniverseObject.actors[global.currentActor] = player
-    player.position = player.position + vector(0,0,1)
-    --hack to generate terrain because jesus it just doesn't work
-    destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
-    table.remove(originalUniverseObject.actors,global.currentActor)
-    global.currentUniverse = destinationUniverse
-  
+  global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
+  local player = originalUniverseObject.actors[global.currentActor]
+  destinationUniverseObject.actors[global.currentActor] = player
+  player.position = player.position + vector(0,0,1)
+  processCollisions(destinationUniverseObject)
+  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)
+  destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
+  -- ^ hack to generate terrain because jesus it just doesn't work
+  table.remove(originalUniverseObject.actors,global.currentActor)
+  global.currentUniverse = destinationUniverse
+  local objectList = destinationUniverseObject.collisionMap  
   isChunkGenerated = {}
-  isTileGenerated = {} 
-  isRampGenerated = {}   
+  isTileGenerated = {}    
   for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
       if chunk.altered then
         worldFunctions.saveChunk(originalUniverseObject,chunk)
       end
-      for i,object in pairs(chunk.objects) do
-        object.removed = true
-      end
   end
+  global.multiverse[originalUniverse] = nil
+  global.playerData.world = destinationUniverse
 end  
-end
 
 function global.saveGame()
 end

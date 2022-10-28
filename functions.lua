@@ -118,3 +118,6 @@ function addTableToTable(table1,table2)
     table.insert(table1,v)
   end
 end
+function pointOnACircle(radius,x,y,theta)
+  return vector(x+radius*math.cos(theta),y+radius*math.sin(theta))
+end

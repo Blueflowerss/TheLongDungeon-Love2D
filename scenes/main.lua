@@ -14,14 +14,14 @@ local ceil = math.ceil
 local saveTimer = 0
 skyValue1 = {(width/50),(height/50)}
 skyValue2 = {(width/66.6),(height/66.6)}
---function s.quit()
---  for i,chunk in pairs(global.multiverse[global.currentUniverse].chunks) do
---    worldFunctions.saveChunk(global.multiverse[global.currentUniverse],chunk)
---  end
---  global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
---  love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
---  print("exiting")
---end
+function s.quit()
+  for i,chunk in pairs(global.multiverse[global.currentUniverse].chunks) do
+    worldFunctions.saveChunk(global.multiverse[global.currentUniverse],chunk)
+  end
+  global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
+  love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
+  print("exiting")
+end
 function s.load()
   love.keyboard.setKeyRepeat(true)
   global.cameraPosition = global.multiverse[global.currentUniverse].actors[global.currentActor].position

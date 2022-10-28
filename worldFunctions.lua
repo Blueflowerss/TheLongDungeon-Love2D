@@ -119,21 +119,22 @@ function worldFunctions.generateTerrain(chunk,universeObject)
         
       end
     end
-    for i,block in pairs(blocksWhichNeedRamps) do
-      --ramp creation
-      for x=-1,1 do
-        for y=-1,1 do
-          height = cachedNoise[vector(block.x,block.y):__tostring()]
-          neighborHeight = cachedNoise[vector(block.x+x,block.y+y):__tostring()]
-          if neighborHeight == height-1  and neighborHeight ~= nil and isRampGenerated[block:__tostring()] == nil then
-            local tile = classFactory.getObject("ramp")
-            tile.position = block+vector(x,y)
-            table.insert(chunk.objects,tile) 
-            table.insert(universeObject.objects,tile)  
-            isRampGenerated[tile.position:__tostring()] = true
-          end
-        end
-      end
-    end
-  end
+    --for i,block in pairs(blocksWhichNeedRamps) do
+    --  --ramp creation
+    --  for x=-1,1 do
+    --    for y=-1,1 do
+    --      if abs(x) + abs(y) ~= 0 then
+    --      height = cachedNoise[vector(block.x,block.y):__tostring()]
+    --      neighborHeight = cachedNoise[vector(block.x+x,block.y+y):__tostring()]
+    --      if neighborHeight == height-1  and neighborHeight ~= nil and isRampGenerated[block:__tostring()] == nil then
+    --        local tile = classFactory.getObject("ramp")
+    --        tile.position = block+vector(x,y)
+    --        table.insert(chunk.objects,tile) 
+    --        table.insert(universeObject.objects,tile)  
+    --        isRampGenerated[tile.position:__tostring()] = true
+    --      end
+    --    end
+    --  end
+    --end
+  --end
 end
