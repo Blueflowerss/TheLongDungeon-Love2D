@@ -65,35 +65,39 @@ function global.initializeGame()
   end
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
   global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
+  worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,global.multiverse[global.currentUniverse])
 end
 
 function global.switchUniverse(originalUniverse,destinationUniverse)
   local originalUniverseObject = global.multiverse[originalUniverse]
+  local player = originalUniverseObject.actors[global.currentActor]
   if global.multiverse[destinationUniverse] == nil then
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
   local destinationUniverseObject = global.multiverse[destinationUniverse]
+  local objectList = destinationUniverseObject.collisionMap
+  --while (objectList == {}) do
+  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)  
+  --end
+  print(inspect(objectList)) 
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-  local player = originalUniverseObject.actors[global.currentActor]
-  destinationUniverseObject.actors[global.currentActor] = player
+  --destinationUniverseObject.actors[global.currentActor] = player
   player.position = player.position + vector(0,0,1)
-  processCollisions(destinationUniverseObject)
-  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)
-  destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
+  -- ^ if i didn't do this the player would fall through the ground
+  --destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
   -- ^ hack to generate terrain because jesus it just doesn't work
-  table.remove(originalUniverseObject.actors,global.currentActor)
-  global.currentUniverse = destinationUniverse
-  local objectList = destinationUniverseObject.collisionMap  
+  --table.remove(originalUniverseObject.actors,global.currentActor)
+  --  global.currentUniverse = destinationUniverse
   isChunkGenerated = {}
   isTileGenerated = {}    
-  for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
-      if chunk.altered then
-        worldFunctions.saveChunk(originalUniverseObject,chunk)
-      end
-  end
-  global.multiverse[originalUniverse] = nil
-  global.playerData.world = destinationUniverse
+  --for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
+  --    if chunk.altered then
+  --      print(chunk.chunkPosition)
+  --      worldFunctions.saveChunk(originalUniverseObject,chunk)
+  --    end
+  --end
+  --global.multiverse[originalUniverse] = nil
 end  
 
 function global.saveGame()

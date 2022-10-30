@@ -215,6 +215,13 @@ function vector:ceil()
   local ceil = math.ceil
   return self:set(ceil(self.x),ceil(self.y),ceil(self.z))
 end
+function vector:specialCeil()
+  local sign = math.sign
+  local ceil = math.ceil
+  local nx,ny,nz = sign(self.x),sign(self.y),sign(self.z)
+  local x,y,z = ceil(self.x*nx),ceil(self.y*ny),ceil(self.z*nz)
+  return self:set(x*nx,y*ny,z*nz)
+end
 
 
 -- pack up and return module

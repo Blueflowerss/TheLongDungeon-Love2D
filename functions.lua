@@ -50,9 +50,8 @@ function functions.generateTerrainNoise(octaves,x,y,z,value)
   tmpNoise = tmpNoise / octaves
   return tmpNoise
 end
-function functions.normalize(min,value,max) 
-return (value-min)/(max-min)
-end
+function math.sign(n) return n>0 and 1 or n<0 and -1 or 0 end
+function math.normalize(x,y) local l=(x*x+y*y)^.5 if l==0 then return 0,0,0 else return x/l,y/l,l end end
 function table.shallow_copy(t)
   local t2 = {}
   for k,v in pairs(t) do

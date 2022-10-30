@@ -36,7 +36,7 @@ function playerObject:new(spawnVector)
         end
       end
       if o.position ~= o.walkingTo then
-        local direction = ((o.walkingTo-o.position):norm()):ceil()
+        local direction = ((o.walkingTo-o.position):norm()):specialCeil()
         local blocked = false
         if objectList[(o.position+direction):__tostring()] then
           local tile = objectList[(o.position+direction):__tostring()]

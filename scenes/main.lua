@@ -19,6 +19,7 @@ function s.quit()
     worldFunctions.saveChunk(global.multiverse[global.currentUniverse],chunk)
   end
   global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
+  global.playerData.world = global.currentUniverse
   love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
   print("exiting")
 end
