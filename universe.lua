@@ -10,8 +10,8 @@ function universe:new(index,vectorOfSpawn)
     o.objects = {}
     o.bodies = {}
     --temporary for now
-    o.bodies["sun"] = {radius=0.1, color=255}
-    o.bodies["body1"] = {radius=20,color=144}
-    o.bodies["body2"] = {radius=37,color=144}
+    o.bodies[1] = {radius=0.1, color=255}
+    o.bodies[2] = {radius=20,color=144}
+    o.bodies[3] = {radius=37,color=144}
     return o
 end

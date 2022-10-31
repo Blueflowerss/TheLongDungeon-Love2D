@@ -19,16 +19,20 @@ function s.draw()
     local renderStack = {}
     local height,width = love.graphics.getDimensions()
     local resolution = vector(height,width)
+    local bodies = global.multiverse[global.currentUniverse].bodies
+    local planet = global.currentPlanet
     local circle = {
       middleHeight = height/2,
       middleWidth = width/2,
       radius =  (height*width)/5000
     }
-    for i,v in pairs(global.multiverse[global.currentUniverse].bodies) do
+    local currentPlanetPosition = pointOnACircle(bodies[planet].radius,circle.middleHeight,circle.middleWidth,value)
+    for i,v in pairs(bodies) do
       createAndInsertTable(renderStack,3,love.graphics.circle("line",circle.middleHeight,circle.middleWidth,v.radius*circle.radius/100))
       local point = pointOnACircle(v.radius,circle.middleHeight,circle.middleWidth,value)
       createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,2))
     end
+
     for _,renderLayer in pairs(renderStack) do
         for _,renderCommand in pairs(renderLayer) do
           love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])

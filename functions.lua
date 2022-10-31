@@ -82,17 +82,14 @@ end
 local createAndInsertTable = functions.createAndInsertTable
 function processCollisions(universe)
   universe.collisionMap = {}
-  local storedObjects = {}
   for objectIndex,object in pairs(universe.objects) do
     if object.removed == nil then
       createAndInsertTable(universe.collisionMap,object.position:__tostring(),object)
-      table.insert(storedObjects,object)
     end
   end
   for actorIndex,actor in pairs(universe.actors) do
     createAndInsertTable(universe.collisionMap,actor.position:__tostring(),actor)
   end
-  universe.objects = storedObjects
 end
 -- from https://stackoverflow.com/questions/1340230/check-if-directory-exists-in-lua
 --- Check if a file or directory exists in this path

@@ -26,6 +26,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
             isChunkGenerated[chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
+            print(universeObject.index)
             local chunk = worldFunctions.loadChunk(universeObject,chunkPosition)
             isChunkGenerated[chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk          
@@ -53,6 +54,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     end
     universeObject.chunks[chunk.chunkPosition:__tostring()] = nil
   end
+  
   universeObject.chunks = chunksToKeep
 end
 function worldFunctions.saveChunk(universe,chunk)
@@ -95,20 +97,17 @@ function worldFunctions.loadChunk(universe,chunkPosition)
 end
 function worldFunctions.generateTerrain(chunk,universeObject) 
     local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
-    local blocksWhichNeedRamps = {}
     local cachedNoise = {}
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
-        local height = generateTerrainNoise(3,x+position.x,y+position.y,global.currentUniverse)*global.heightMultiplier
+        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index*global.currentPlanet)*global.heightMultiplier
         height = ceil(height)
         cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do
             local tilePosition = position+vector(x,y,z)
             if isTileGenerated[tilePosition:__tostring()] == nil and tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
-              if tilePosition.z == height then tileType = "ground" else tileType="wall"
-              table.insert(blocksWhichNeedRamps,tilePosition)
-              end
+              if tilePosition.z == height then tileType = "ground" else tileType="wall" end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
               table.insert(chunk.objects,tile) 

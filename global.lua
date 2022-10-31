@@ -8,6 +8,7 @@ global.height = 2
 global.heightMultiplier = 100
 global.chunkUnloadDistance = 4
 global.currentUniverse = 2200
+global.currentPlanet = 1
 global.currentActor = 0
 global.buildSlot = 0
 global.buildSlotName = ""
@@ -55,6 +56,7 @@ function global.initializeGame()
   
     local sprites = love.filesystem.getDirectoryItems("/sprites")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..global.currentUniverse.."/chunks/")
+  global.chunkFiles = {}
   for i,chunk in pairs(global.chunkFiles) do
     global.chunkFiles[chunk] = 1
   end
@@ -74,23 +76,21 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
   if global.multiverse[destinationUniverse] == nil then
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
+  isChunkGenerated = {}
+  isTileGenerated = {}    
   local destinationUniverseObject = global.multiverse[destinationUniverse]
   local objectList = destinationUniverseObject.collisionMap
-  --while (objectList == {}) do
-  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)  
-  --end
-  print(inspect(objectList)) 
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
   --destinationUniverseObject.actors[global.currentActor] = player
-  player.position = player.position + vector(0,0,1)
-  -- ^ if i didn't do this the player would fall through the ground
+  --player.position = player.position + vector(0,0,1)
+  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)   
+  print(inspect(destinationUniverseObject))
+  ---- ^ if i didn't do this the player would fall through the ground
   --destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
-  -- ^ hack to generate terrain because jesus it just doesn't work
+  ---- ^ hack to generate terrain because jesus it just doesn't work
   --table.remove(originalUniverseObject.actors,global.currentActor)
   --  global.currentUniverse = destinationUniverse
-  isChunkGenerated = {}
-  isTileGenerated = {}    
   --for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
   --    if chunk.altered then
   --      print(chunk.chunkPosition)
