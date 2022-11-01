@@ -76,28 +76,25 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
   if global.multiverse[destinationUniverse] == nil then
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
-  isChunkGenerated = {}
-  isTileGenerated = {}    
   local destinationUniverseObject = global.multiverse[destinationUniverse]
-  local objectList = destinationUniverseObject.collisionMap
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-  --destinationUniverseObject.actors[global.currentActor] = player
-  --player.position = player.position + vector(0,0,1)
-  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)   
-  print(inspect(destinationUniverseObject))
-  ---- ^ if i didn't do this the player would fall through the ground
-  --destinationUniverseObject.actors[global.currentActor].playerLastChunk = vector(-999,-999,-999)
-  ---- ^ hack to generate terrain because jesus it just doesn't work
-  --table.remove(originalUniverseObject.actors,global.currentActor)
-  --  global.currentUniverse = destinationUniverse
-  --for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
-  --    if chunk.altered then
-  --      print(chunk.chunkPosition)
-  --      worldFunctions.saveChunk(originalUniverseObject,chunk)
-  --    end
-  --end
-  --global.multiverse[originalUniverse] = nil
+  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)
+  processCollisions(destinationUniverseObject)
+  local objectList = destinationUniverseObject.collisionMap
+  local blocked = checkForFlag(objectList,player.position:__tostring(),"wall")
+  if not blocked then
+    destinationUniverseObject.actors[global.currentActor] = player
+    table.remove(originalUniverseObject.actors,global.currentActor)
+    global.currentUniverse = destinationUniverse
+    for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
+        if chunk.altered then
+          worldFunctions.saveChunk(originalUniverseObject,chunk)
+        end
+    end
+    isChunkGenerated[originalUniverse] = nil
+    global.multiverse[originalUniverse] = nil
+  end
 end  
 
 function global.saveGame()

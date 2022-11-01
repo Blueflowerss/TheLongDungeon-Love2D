@@ -79,6 +79,20 @@ function table.length(table)
   end
   return count
 end
+function checkForFlag(collisionMap,positionString,searchedFlag)
+  local list = collisionMap[positionString]
+  if list ~= nil then
+    for _,v in pairs(list) do
+      for _,flag in pairs(v) do
+        if flag == searchedFlag then
+          return true 
+        end
+      end
+    end
+  else
+    return false
+  end
+end
 local createAndInsertTable = functions.createAndInsertTable
 function processCollisions(universe)
   universe.collisionMap = {}

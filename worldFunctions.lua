@@ -19,29 +19,32 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
       for z=-height,height do
         local chunkPositionString = (centerOfRemoval+vector(x,y,z)):__tostring()
         local chunkPosition = centerOfRemoval+vector(x,y,z)
-        if isChunkGenerated[chunkPositionString] == nil then
+        if isChunkGenerated[universeObject.index] == nil then
+          isChunkGenerated[universeObject.index] = {}
+        end
+        if isChunkGenerated[universeObject.index][chunkPositionString] == nil then
           if global.chunkFiles[chunkPositionString] == nil then
             local chunk = chunkObject:new(chunkPosition)
             worldFunctions.generateTerrain(chunk,universeObject)
-            isChunkGenerated[chunk.chunkPosition:__tostring()] = true
+            isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
-            print(universeObject.index)
             local chunk = worldFunctions.loadChunk(universeObject,chunkPosition)
-            isChunkGenerated[chunk.chunkPosition:__tostring()] = true
+            isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = true
             universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk          
           end
         end
       end
     end 
   end
+
   local chunksToKeep = {}
   for chunkIndex,chunk in pairs(universeObject.chunks) do 
     local distanceFromPlayer = floor(chunk.chunkPosition.dist(centerOfRemoval,chunk.chunkPosition))
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
-      isChunkGenerated[chunk.chunkPosition:__tostring()] = nil 
+      isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
 
         worldFunctions.saveChunk(universeObject,chunk)
@@ -89,7 +92,6 @@ function worldFunctions.loadChunk(universe,chunkPosition)
         end
         table.insert(universe.objects,newObject)
         table.insert(chunk.objects,newObject)
-        isTileGenerated[newObject.position:__tostring()] = true
       end
     end
   end
@@ -105,14 +107,13 @@ function worldFunctions.generateTerrain(chunk,universeObject)
         cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do
             local tilePosition = position+vector(x,y,z)
-            if isTileGenerated[tilePosition:__tostring()] == nil and tilePosition.z<=height and tilePosition.z>= 0 then
+            if tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
               if tilePosition.z == height then tileType = "ground" else tileType="wall" end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
               table.insert(chunk.objects,tile) 
               table.insert(universeObject.objects,tile)  
-              isTileGenerated[tilePosition:__tostring()] = true
             end
           end
         
