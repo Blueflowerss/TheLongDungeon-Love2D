@@ -1,5 +1,5 @@
 global = {}
-
+space = {}
 global.noiseSettings = {}
 global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
@@ -10,6 +10,7 @@ global.chunkUnloadDistance = 4
 global.currentUniverse = 2200
 global.currentPlanet = 1
 global.currentActor = 0
+global.planetAmount = 5
 global.buildSlot = 0
 global.buildSlotName = ""
 global.gameSprites = {}
@@ -40,8 +41,13 @@ kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
 escape="escape",
 m="spacemenu"},
 ["SPACEMENU"]={
-m="exitmenu"
+  m="exitmenu",left="left",right="right"
 }}
+space.viewingUniverse = 2200
+space.viewingPlanet = 1
+space.offset = vector(0,0)
+space.centralCircle = {}
+space.bodies = {}
 
 function global.initializeGame()
   local playerData = love.filesystem.read("playerData.json")
@@ -52,6 +58,10 @@ function global.initializeGame()
     end
     global.playerSpawnPoint = playerData.position
     global.currentUniverse = playerData.world
+    timer = playerData.timer
+    if timer == nil then
+      timer = 0
+    end
   end
   
     local sprites = love.filesystem.getDirectoryItems("/sprites")

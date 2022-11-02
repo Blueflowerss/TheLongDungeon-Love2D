@@ -50,6 +50,27 @@ function functions.generateTerrainNoise(octaves,x,y,z,value)
   tmpNoise = tmpNoise / octaves
   return tmpNoise
 end
+function functions.generatePlanets(amount,seed)
+  math.randomseed(seed)
+  local bodies = {}
+  local orbitalRange = {}
+  for i=1,amount do
+    local planet = {}
+    local orbitRadius = i
+    while orbitalRange[orbitRadius] == 1 do
+      orbitRadius = math.random(10)
+    end
+    planet.orbitRadius = orbitRadius*math.random(20,30)
+    orbitalRange[orbitRadius] = 1
+    planet.planetSize = math.random(5)
+    planet.orbitalSpeed = math.random(10)
+    planet.chunks = {}
+    planet.actors = {}
+    planet.objects = {}
+    table.insert(bodies,planet)
+  end
+  return bodies
+end
 function math.sign(n) return n>0 and 1 or n<0 and -1 or 0 end
 function math.normalize(x,y) local l=(x*x+y*y)^.5 if l==0 then return 0,0,0 else return x/l,y/l,l end end
 function table.shallow_copy(t)

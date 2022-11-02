@@ -175,7 +175,21 @@ function SPACEMENU()
     global.gameScene = "GAMESCENE"
     Scene.Load(global.scenes["GAMESCENE"])
   end
-  local controls = {exitmenu=quitMenu}
+  function up()
+    space.viewingUniverse = (space.viewingPlanet - 1)%global.planetAmount
+  end
+  function down()
+    space.viewingUniverse = (space.viewingPlanet + 1)%global.planetAmount 
+  end
+  function left()
+    space.viewingUniverse = space.viewingUniverse - 1
+    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+  end
+  function right()
+    space.viewingUniverse = space.viewingUniverse + 1
+    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+  end
+  local controls = {exitmenu=quitMenu,left=left,right=right}
 if keys[key] ~= nil then
   controls[keys[key]]()
 end
