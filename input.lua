@@ -2,7 +2,7 @@ input = {}
 
 function input:processInput(key)
   local keys = global.keyBindings[global.gameScene]
-  local actor = global.multiverse[global.currentUniverse].actors[global.currentActor]
+  local actor = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor]
   
   -- controls for normal game 
   function GAMESCENE()
@@ -35,14 +35,14 @@ function input:processInput(key)
       end
       function placeEntity()
 
-        local universe = global.multiverse[global.currentUniverse]
+        local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
         local placedObjectPos = actor.position+inputDirection
         local objectName = classFactory.finishedObjectsIndexTable[(global.buildSlot%classFactory.databaseLength)+1]
         local object = classFactory.getObject(objectName)
         object.position = placedObjectPos
-        local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
+        local listPosition = planet.collisionMap[placedObjectPos:__tostring()]
         local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):floor()
-        local chunk = universe.chunks[chunkPos:__tostring()]
+        local chunk = planet.chunks[chunkPos:__tostring()]
         local obstructed = false
         local topObstructed = false
         local constructRoof = false
@@ -55,7 +55,7 @@ function input:processInput(key)
               break
             end
           end
-          listPosition = universe.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
+          listPosition = planet.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
           if listPosition ~= nil and constructRoof then
             for i,v in pairs(listPosition) do
               if v.flags["floor"] or v.flags["blocks"] then
@@ -66,15 +66,15 @@ function input:processInput(key)
           end
         end
         if not obstructed then
-          table.insert(universe.objects,object)
+          table.insert(planet.objects,object)
           table.insert(chunk.objects,object)
           if not topObstructed and constructRoof then
             local object = classFactory.getObject("floor")
             object.position = placedObjectPos+vector(0,0,1)
             local aboveChunkPos = vector(object.position.x/global.chunkSize,object.position.y/global.chunkSize,object.position.z/global.height):floor()
-            local aboveChunk = universe.chunks[aboveChunkPos:__tostring()]
+            local aboveChunk = planet.chunks[aboveChunkPos:__tostring()]
             table.insert(chunk.objects,object)
-            table.insert(universe.objects,object)
+            table.insert(planet.objects,object)
             aboveChunk.altered = true
           end
           chunk.altered = true

@@ -76,30 +76,32 @@ function global.initializeGame()
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
-  global.multiverse[global.currentUniverse].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
-  worldFunctions.chunkGeneration(global.multiverse[global.currentUniverse].actors[global.currentActor].position,3,global.multiverse[global.currentUniverse])
+  global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
+  local universe = global.multiverse[global.currentUniverse]
+  worldFunctions.chunkGeneration(universe.bodies[global.currentPlanet].actors[global.currentActor].position,3,universe,universe.bodies[global.currentPlanet])
 end
 
 function global.switchUniverse(originalUniverse,destinationUniverse)
   local originalUniverseObject = global.multiverse[originalUniverse]
-  local player = originalUniverseObject.actors[global.currentActor]
+  local player = originalUniverseObject.bodies[global.currentPlanet].actors[global.currentActor]
   if global.multiverse[destinationUniverse] == nil then
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
   local destinationUniverseObject = global.multiverse[destinationUniverse]
+  local destinationUniversePlanet = destinationUniverseObject.bodies[global.currentPlanet]
   local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
   global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
-  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)
-  processCollisions(destinationUniverseObject)
-  local objectList = destinationUniverseObject.collisionMap
+  worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject,destinationUniversePlanet)
+  processCollisions(destinationUniversePlanet)
+  local objectList = destinationUniversePlanet.collisionMap
   local blocked = checkForFlag(objectList,player.position:__tostring(),"blocks")
   if not blocked then
-    destinationUniverseObject.actors[global.currentActor] = player
-    table.remove(originalUniverseObject.actors,global.currentActor)
+    destinationUniversePlanet.actors[global.currentActor] = player
+    table.remove(originalUniverseObject.bodies[global.currentPlanet].actors,global.currentActor)
     global.currentUniverse = destinationUniverse
-    for chunkIndex,chunk in pairs(originalUniverseObject.chunks) do 
+    for chunkIndex,chunk in pairs(originalUniverseObject.bodies[global.currentPlanet].chunks) do 
         if chunk.altered then
-          worldFunctions.saveChunk(originalUniverseObject,chunk)
+          worldFunctions.saveChunk(originalUniverseObject,originalUniverseObject.bodies[global.currentPlanet],chunk)
         end
     end
     isChunkGenerated[originalUniverse] = nil

@@ -12,12 +12,12 @@ local height,width = love.graphics.getDimensions()
 local floor = math.floor
 local ceil = math.ceil
 function s.quit()
-  for i,chunk in pairs(global.multiverse[global.currentUniverse].chunks) do
+  for i,chunk in pairs(global.multiverse[global.currentUniverse].bodies[global.currentPlanet].chunks) do
     if chunk.altered then
-      worldFunctions.saveChunk(global.multiverse[global.currentUniverse],chunk)
+      worldFunctions.saveChunk(global.multiverse[global.currentUniverse],global.multiverse[global.currentUniverse].bodies[global.currentPlanet],chunk)
     end
   end
-  global.playerData.position = global.multiverse[global.currentUniverse].actors[global.currentActor].position:array()
+  global.playerData.position = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor].position:array()
   global.playerData.world = global.currentUniverse
   global.playerData.timer = timer
   love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
@@ -25,8 +25,8 @@ function s.quit()
 end
 function s.load()
   love.keyboard.setKeyRepeat(true)
-  global.cameraPosition = global.multiverse[global.currentUniverse].actors[global.currentActor].position
-  processCollisions(global.multiverse[global.currentUniverse])
+  global.cameraPosition = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor].position
+  processCollisions(global.multiverse[global.currentUniverse].bodies[global.currentPlanet])
   
 end
 function s.unload()
@@ -34,7 +34,7 @@ function s.unload()
 end
 function s.draw()
   generateVisible()
-  local player = global.multiverse[global.currentUniverse].actors[global.currentActor]
+  local player = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor]
   local height,width = love.graphics.getDimensions()
   local resolution = vector(height,width)
   local renderStack = {}
@@ -42,7 +42,7 @@ function s.draw()
     global.cameraPosition = player.position
   end
   cameraOffset = global.cameraPosition*-global.spriteDistancing * global.spriteScaling
-  local collisionMap = global.multiverse[global.currentUniverse].collisionMap
+  local collisionMap = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
   local backroundCanvas = love.graphics.newCanvas(resolution.x*2,resolution.y*2)
   love.graphics.setCanvas(backroundCanvas)
   love.graphics.push()
@@ -97,10 +97,12 @@ end
 function s.update(dt)
   timer = timer + 0.0001
   for i,universe in pairs(global.multiverse) do
-    processCollisions(universe)
-  end
-  for i,actor in pairs(global.multiverse[global.currentUniverse].actors) do
-    actor:update(dt)
+    for i,planet in pairs(universe.bodies) do
+      processCollisions(planet)
+      for i,actor in pairs(planet.actors) do
+        actor:update(dt)
+      end
+    end
   end
 
 end

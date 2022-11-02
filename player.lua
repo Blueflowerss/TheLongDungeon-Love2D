@@ -16,10 +16,10 @@ function playerObject:new(spawnVector)
       --global.cameraPosition = o.position
       local chunkPosition = (vector(o.position.x/global.chunkSize,o.position.y/global.chunkSize,o.position.z/global.height)):floor()
       if o.playerLastChunk ~= chunkPosition then
-        worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse])
+        worldFunctions.chunkGeneration(o.position,3,global.multiverse[global.currentUniverse],global.multiverse[global.currentUniverse].bodies[global.currentPlanet])
         o.playerLastChunk = chunkPosition
       end
-      local objectList = global.multiverse[global.currentUniverse].collisionMap
+      local objectList = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
       local tile =  objectList[o.position:__tostring()]
         local falling = true
       for _,object in pairs(tile) do

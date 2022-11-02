@@ -64,9 +64,11 @@ function functions.generatePlanets(amount,seed)
     orbitalRange[orbitRadius] = 1
     planet.planetSize = math.random(5)
     planet.orbitalSpeed = math.random(10)
+    planet.index = i
     planet.chunks = {}
     planet.actors = {}
     planet.objects = {}
+    planet.collisionMap = {}
     table.insert(bodies,planet)
   end
   return bodies
@@ -113,15 +115,15 @@ function checkForFlag(collisionMap,positionString,searchedFlag)
   end
 end
 local createAndInsertTable = functions.createAndInsertTable
-function processCollisions(universe)
+function processCollisions(planet)
   universe.collisionMap = {}
-  for objectIndex,object in pairs(universe.objects) do
+  for objectIndex,object in pairs(planet.objects) do
     if object.removed == nil then
-      createAndInsertTable(universe.collisionMap,object.position:__tostring(),object)
+      createAndInsertTable(planet.collisionMap,object.position:__tostring(),object)
     end
   end
-  for actorIndex,actor in pairs(universe.actors) do
-    createAndInsertTable(universe.collisionMap,actor.position:__tostring(),actor)
+  for actorIndex,actor in pairs(planet.actors) do
+    createAndInsertTable(planet.collisionMap,actor.position:__tostring(),actor)
   end
 end
 -- from https://stackoverflow.com/questions/1340230/check-if-directory-exists-in-lua

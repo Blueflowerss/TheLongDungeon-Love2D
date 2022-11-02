@@ -10,7 +10,7 @@ local normalize = functions.normalize
 isTileGenerated = {}
 isRampGenerated = {}
 isChunkGenerated = {}
-function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject)
+function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject,planet)
   --centerOfRemoval is player's position 
   local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
   local height = global.height
@@ -21,17 +21,18 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
         local chunkPosition = centerOfRemoval+vector(x,y,z)
         if isChunkGenerated[universeObject.index] == nil then
           isChunkGenerated[universeObject.index] = {}
+          isChunkGenerated[universeObject.index][planet.index] = {}
         end
-        if isChunkGenerated[universeObject.index][chunkPositionString] == nil then
-          if love.filesystem.read(universeObject.index.."/chunks/"..chunkPosition:__tostring()) == nil then
+        if isChunkGenerated[universeObject.index][planet.index][chunkPositionString] == nil then
+          if love.filesystem.read(universeObject.index.."/"..planet.index.."/chunks/"..chunkPosition:__tostring()) == nil then
             local chunk = chunkObject:new(chunkPosition)
-            worldFunctions.generateTerrain(chunk,universeObject)
-            isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = true
-            universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk
+            worldFunctions.generateTerrain(chunk,universeObject,planet)
+            isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = true
+            planet.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
-            local chunk = worldFunctions.loadChunk(universeObject,chunkPosition)
-            isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = true
-            universeObject.chunks[chunk.chunkPosition:__tostring()] = chunk          
+            local chunk = worldFunctions.loadChunk(universeObject,planet,chunkPosition)
+            isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = true
+            planet.chunks[chunk.chunkPosition:__tostring()] = chunk    
           end
         end
       end
@@ -39,28 +40,26 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
   end
 
   local chunksToKeep = {}
-  for chunkIndex,chunk in pairs(universeObject.chunks) do 
+  for chunkIndex,chunk in pairs(planet.chunks) do 
     local distanceFromPlayer = floor(chunk.chunkPosition.dist(centerOfRemoval,chunk.chunkPosition))
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
       isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
-
-        worldFunctions.saveChunk(universeObject,chunk)
+        worldFunctions.saveChunk(universeObject,planet,chunk)
       end
       for i,object in pairs(chunk.objects) do
           object.removed = true
-          isTileGenerated[object.position:__tostring()] = nil
       end
       
     end
-    universeObject.chunks[chunk.chunkPosition:__tostring()] = nil
+    planet.chunks[chunk.chunkPosition:__tostring()] = nil
   end
   
-  universeObject.chunks = chunksToKeep
+  planet.chunks = chunksToKeep
 end
-function worldFunctions.saveChunk(universe,chunk)
+function worldFunctions.saveChunk(universe,planet,chunk)
   -- POSITION FIELD IS PREVENTING OBJECTS FROM SAVING, SOMETHING ABOUT IT NOT ENCOMPASSING THE OBJECTS
   --could couple multiple objects into one position, if save filesize becomes an issue.
   local savedChunk = {["objects"]={}}
@@ -74,13 +73,13 @@ function worldFunctions.saveChunk(universe,chunk)
     local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
     table.insert(savedChunk.objects,compressedObject)
   end
-  love.filesystem.createDirectory(universe.index.."/chunks/")
+  love.filesystem.createDirectory(universe.index.."/"..planet.index.."/chunks/")
   local file = love.filesystem.newFile(chunk.chunkPosition:__tostring())
-  love.filesystem.write(universe.index.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
+  love.filesystem.write(universe.index.."/"..planet.index.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
   global.chunkFiles[chunk.chunkPosition:__tostring()] = 1
 end
-function worldFunctions.loadChunk(universe,chunkPosition)
-  local chunkData = love.filesystem.read(universe.index.."/chunks/"..chunkPosition:__tostring())
+function worldFunctions.loadChunk(universe,planet,chunkPosition)
+  local chunkData = love.filesystem.read(universe.index.."/"..planet.index.."/chunks/"..chunkPosition:__tostring())
   local chunk = chunkObject:new(chunkPosition)
   if chunkData ~= nil then
     local chunkData = lunajson.decode(chunkData)
@@ -90,14 +89,14 @@ function worldFunctions.loadChunk(universe,chunkPosition)
         if object.position ~= nil then
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end
-        table.insert(universe.objects,newObject)
+        table.insert(planet.objects,newObject)
         table.insert(chunk.objects,newObject)
       end
     end
   end
   return chunk
 end
-function worldFunctions.generateTerrain(chunk,universeObject) 
+function worldFunctions.generateTerrain(chunk,universeObject,planet) 
     local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
     local cachedNoise = {}
     for x=0,global.chunkSize do
@@ -113,7 +112,7 @@ function worldFunctions.generateTerrain(chunk,universeObject)
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
               table.insert(chunk.objects,tile) 
-              table.insert(universeObject.objects,tile)  
+              table.insert(planet.objects,tile)  
             end
           end
         

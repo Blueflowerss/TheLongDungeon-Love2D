@@ -9,8 +9,8 @@ function generateVisible()
   local delta      = 5
   local width      = 800
   local height     = 800
-  local player = global.multiverse[global.currentUniverse].actors[global.currentActor]
-  local collisionMap = global.multiverse[global.currentUniverse].collisionMap
+  local player = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor]
+  local collisionMap = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
   visible = {}
 	
 local isTransparent = function(x,y)
