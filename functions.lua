@@ -83,10 +83,8 @@ function checkForFlag(collisionMap,positionString,searchedFlag)
   local list = collisionMap[positionString]
   if list ~= nil then
     for _,v in pairs(list) do
-      for _,flag in pairs(v) do
-        if flag == searchedFlag then
-          return true 
-        end
+      if v.flags[searchedFlag] ~= nil then
+        return true
       end
     end
   else

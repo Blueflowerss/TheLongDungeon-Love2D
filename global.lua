@@ -82,7 +82,7 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
   worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject)
   processCollisions(destinationUniverseObject)
   local objectList = destinationUniverseObject.collisionMap
-  local blocked = checkForFlag(objectList,player.position:__tostring(),"wall")
+  local blocked = checkForFlag(objectList,player.position:__tostring(),"blocks")
   if not blocked then
     destinationUniverseObject.actors[global.currentActor] = player
     table.remove(originalUniverseObject.actors,global.currentActor)

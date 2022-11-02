@@ -23,7 +23,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
           isChunkGenerated[universeObject.index] = {}
         end
         if isChunkGenerated[universeObject.index][chunkPositionString] == nil then
-          if global.chunkFiles[chunkPositionString] == nil then
+          if love.filesystem.read(universeObject.index.."/chunks/"..chunkPosition:__tostring()) == nil then
             local chunk = chunkObject:new(chunkPosition)
             worldFunctions.generateTerrain(chunk,universeObject)
             isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = true

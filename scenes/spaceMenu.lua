@@ -32,7 +32,8 @@ function s.draw()
       local point = pointOnACircle(v.radius,circle.middleHeight,circle.middleWidth,value)
       createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,2))
     end
-
+    love.graphics.setColor(2,44,55)
+    createAndInsertTable(renderStack,3,love.graphics.circle("fill",currentPlanetPosition.x,currentPlanetPosition.y,10))
     for _,renderLayer in pairs(renderStack) do
         for _,renderCommand in pairs(renderLayer) do
           love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])
