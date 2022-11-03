@@ -54,16 +54,22 @@ function functions.generatePlanets(amount,seed)
   math.randomseed(seed)
   local bodies = {}
   local orbitalRange = {}
+  local orbitsSorted = {}
+  local orbitRadius = 2
+  --create a list of orbits sorted by their radius'
   for i=1,amount do
-    local planet = {}
-    local orbitRadius = i
     while orbitalRange[orbitRadius] == 1 do
       orbitRadius = math.random(10)
     end
-    planet.orbitRadius = orbitRadius*math.random(20,30)
     orbitalRange[orbitRadius] = 1
+    table.insert(orbitsSorted,orbitRadius)
+  end
+  table.sort(orbitsSorted)
+  for i=1,amount do
+    local planet = {}
     planet.planetSize = math.random(5)
-    planet.orbitalSpeed = math.random(10)
+    planet.orbitRadius = orbitsSorted[i]*10
+    planet.orbitalSpeed = orbitsSorted[#orbitsSorted+1-i]
     planet.index = i
     planet.chunks = {}
     planet.actors = {}
