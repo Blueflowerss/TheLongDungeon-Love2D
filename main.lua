@@ -28,8 +28,8 @@ function love.load()
   love.window.setTitle("The Long Dungeon - Love2D")
   tick.framerate = 60
   global.initializeGame()
-	Scene.Load(global.scenes["GAMESCENE"])
-	global.gameScene = "GAMESCENE"
+  Scene.Load(global.scenes["GAMESCENE"])
+  global.gameScene = "GAMESCENE"
 end
 
 -- rewrote run function to handle love and scene functions in a "clean" way

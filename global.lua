@@ -41,12 +41,14 @@ kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
 escape="escape",
 m="spacemenu"},
 ["SPACEMENU"]={
-  m="exitmenu",left="left",right="right"
+  m="exitmenu",left="left",right="right",down="down",up="up",["kp+"]="plus",["kp-"]="minus"
 }}
 space.viewingUniverse = 2200
 space.viewingPlanet = 1
+space.viewingTime = 1
 space.offset = vector(0,0)
 space.centralCircle = {}
+space.dateString = ""
 space.bodies = {}
 
 function global.initializeGame()
@@ -59,9 +61,8 @@ function global.initializeGame()
     global.playerSpawnPoint = playerData.position
     global.currentUniverse = playerData.world
     timer = playerData.timer
-    if timer == nil then
-      timer = 0
-    end
+  else
+    timer = 3471321600
   end
   
     local sprites = love.filesystem.getDirectoryItems("/sprites")

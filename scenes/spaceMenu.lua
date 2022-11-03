@@ -9,7 +9,12 @@ local s = {}
 function s.load ()
   space.viewingUniverse = global.currentUniverse
   space.viewingPlanet = global.currentPlanet
+  space.viewingTime = timer
   space.bodies = functions.generatePlanets(5,space.viewingUniverse)
+  updateSpaceMenu()
+end
+function updateSpaceMenu()
+  space.dateString = get_date_from_unix(space.viewingTime)
 end
 function s.unload()
 
@@ -24,7 +29,7 @@ function s.draw()
       middleWidth = width/2,
       radius =  (height*width)/5000
     }
-    local currentPlanetPosition = pointOnACircle(space.bodies[planet].orbitRadius,space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,timer*space.bodies[planet].orbitalSpeed)
+    local currentPlanetPosition = pointOnACircle(space.bodies[planet].orbitRadius,space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,0.0001*space.viewingTime*space.bodies[planet].orbitalSpeed)
     for i,v in pairs(space.bodies) do
       if i == planet then
         love.graphics.setColor(0.2,1,0.2)
@@ -33,11 +38,11 @@ function s.draw()
       end
       createAndInsertTable(renderStack,3,love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100))
       love.graphics.setColor(1,1,1)
-      local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,timer+v.orbitalSpeed)
+      local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime+v.orbitalSpeed)
       createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,v.planetSize))
     end
-    love.graphics.setColor(2,44,55)
     createAndInsertTable(renderStack,3,love.graphics.print(tostring(space.viewingUniverse),width/2,20)) 
+    createAndInsertTable(renderStack,3,love.graphics.print(space.dateString,width/2,40)) 
     for _,renderLayer in pairs(renderStack) do
         for _,renderCommand in pairs(renderLayer) do
           love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])

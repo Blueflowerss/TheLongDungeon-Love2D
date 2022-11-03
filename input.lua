@@ -173,21 +173,33 @@ function SPACEMENU()
     Scene.Load(global.scenes["GAMESCENE"])
   end
   function up()
-    space.viewingUniverse = (space.viewingPlanet - 1)%global.planetAmount
+    space.viewingPlanet = functions.clamp(1,space.viewingPlanet-1,global.planetAmount)
+    updateSpaceMenu()
   end
   function down()
-    space.viewingUniverse = (space.viewingPlanet + 1)%global.planetAmount 
+    space.viewingPlanet = functions.clamp(1,space.viewingPlanet+1,global.planetAmount)
+    updateSpaceMenu()
   end
   function left()
     space.viewingUniverse = space.viewingUniverse - 1
     space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    updateSpaceMenu()
   end
   function right()
     space.viewingUniverse = space.viewingUniverse + 1
     space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    updateSpaceMenu()
   end
-  local controls = {exitmenu=quitMenu,left=left,right=right}
-if keys[key] ~= nil then
+  function minus()
+    space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
+    updateSpaceMenu()
+  end
+  function plus()
+    space.viewingTime = space.viewingTime + 3600
+    updateSpaceMenu()
+  end
+  local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus}
+  if keys[key] ~= nil then
   controls[keys[key]]()
 end
 end

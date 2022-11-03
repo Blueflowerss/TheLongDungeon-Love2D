@@ -32,6 +32,7 @@ end
 function s.unload()
 
 end
+local frameRateTime = 0
 function s.draw()
   generateVisible()
   local player = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor]
@@ -95,7 +96,11 @@ end
 function s.keyreleased(key)
 end
 function s.update(dt)
-  timer = timer + 0.0001
+  frameRateTime = frameRateTime + 1
+  if frameRateTime >= tick.framerate/2 then
+    timer = timer + 1
+    frameRateTime = 0
+  end
   for i,universe in pairs(global.multiverse) do
     for i,planet in pairs(universe.bodies) do
       processCollisions(planet)
