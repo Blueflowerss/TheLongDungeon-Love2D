@@ -138,12 +138,9 @@ function input:processInput(key)
     inputCurrentMode = modes.DESTROY
   end
   function debug()
-    if global.gravityToggle then
-      global.gravityToggle = false
-    else
-      global.gravityToggle = true
+    for i,v in pairs(global.multiverse[global.currentUniverse].bodies[global.currentPlanet].objects) do
+      print(i)  
     end
-    print(global.gravityToggle)
   end
   function buildSlotLeft()
     global.buildSlot = global.buildSlot + 1

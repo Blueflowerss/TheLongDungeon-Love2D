@@ -38,14 +38,13 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
       end
     end 
   end
-
   local chunksToKeep = {}
   for chunkIndex,chunk in pairs(planet.chunks) do 
     local distanceFromPlayer = floor(chunk.chunkPosition.dist(centerOfRemoval,chunk.chunkPosition))
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
-      isChunkGenerated[universeObject.index][chunk.chunkPosition:__tostring()] = nil 
+      isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
         worldFunctions.saveChunk(universeObject,planet,chunk)
       end

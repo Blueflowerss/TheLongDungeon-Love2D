@@ -10,6 +10,7 @@ require "universe"
 require "tile"
 require "chunk"
 require "player"
+require "luatraverse"
 fov = require("rsfov") 
 --other tools
 love.profiler = require('profile') 

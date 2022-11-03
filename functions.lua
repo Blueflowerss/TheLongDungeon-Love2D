@@ -116,12 +116,15 @@ function checkForFlag(collisionMap,positionString,searchedFlag)
 end
 local createAndInsertTable = functions.createAndInsertTable
 function processCollisions(planet)
-  universe.collisionMap = {}
+  planet.collisionMap = {}
+  local objectsToKeep = {}
   for objectIndex,object in pairs(planet.objects) do
     if object.removed == nil then
       createAndInsertTable(planet.collisionMap,object.position:__tostring(),object)
+      table.insert(objectsToKeep,object)
     end
   end
+  planet.objects = objectsToKeep
   for actorIndex,actor in pairs(planet.actors) do
     createAndInsertTable(planet.collisionMap,actor.position:__tostring(),actor)
   end
