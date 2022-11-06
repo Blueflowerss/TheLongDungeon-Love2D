@@ -2,5 +2,9 @@
 {"data":{"devname":"wall","displayname":"Wall","sprite":500},"flags":{"tile":true,"blocks":true}},
 {"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6},"flags":{"tile":true,"floor":true}},
 {"data":{"devname":"woodramp","displayname":"Wooden ramp","sprite":7},"flags":{"tile":true,"floor":true,"ramp":true}},
-{"data":{"devname":"ramp","displayname":"ramp","sprite":8},"flags":{"tile":true,"floor":true,"ramp":true}}]
+{"data":{"devname":"ramp","displayname":"ramp","sprite":8},"flags":{"tile":true,"floor":true,"ramp":true}},
+{"data":{"devname":"snowground","displayname":"snow","sprite":402},"flags":{"tile":true,"floor":true}},
+{"data":{"devname":"icewall","displayname":"Ice Wall","sprite":501},"flags":{"tile":true,"blocks":true}}
 
+
+]

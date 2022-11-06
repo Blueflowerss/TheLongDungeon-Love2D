@@ -191,11 +191,11 @@ function SPACEMENU()
     updateSpaceMenu()
   end
   function minus()
-    space.viewingTime = functions.clamp(0,space.viewingTime - 360,math.huge)
+    space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
     updateSpaceMenu()
   end
   function plus()
-    space.viewingTime = space.viewingTime + 360
+    space.viewingTime = space.viewingTime + 3600
     updateSpaceMenu()
   end
   local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus}

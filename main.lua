@@ -4,6 +4,7 @@ require "input"
 require "functions"
 require "rendering"
 require "worldFunctions"
+require "planetGeneration"
 require "classFactory"
 --class objects
 require "universe"

@@ -50,32 +50,46 @@ function functions.generateTerrainNoise(octaves,x,y,z,value)
   tmpNoise = tmpNoise / octaves
   return tmpNoise
 end
+--from https://stackoverflow.com/questions/26855156/how-to-make-a-weighted-rng-in-roblox-lua-like-csgo-cases
+function weighted_random (weights)
+  local summ = 0
+  for i, weight in pairs (weights) do
+      summ = summ + weight
+  end
+  if summ == 0 then return end
+  -- local value = math.random (summ) -- for integer weights only
+  local value = summ*math.random()
+  summ = 0
+  for i, weight in pairs (weights) do
+      summ = summ + weight
+      if value <= summ then
+          return i
+      end
+  end
+end
+
 function functions.generatePlanets(amount,seed)
   math.randomseed(seed)
   local bodies = {}
-  local orbitalRange = {}
-  local orbitsSorted = {}
-  local orbitRadius = 2
-  --create a list of orbits sorted by their radius'
-  for i=1,amount do
-    while orbitalRange[orbitRadius] == 1 do
-      orbitRadius = math.random(10)
-    end
-    orbitalRange[orbitRadius] = 1
-    table.insert(orbitsSorted,orbitRadius)
-  end
-  table.sort(orbitsSorted)
-  for i=1,amount do
+  local orbitRadius = 1
+  for name,v in pairs(global.planetTypes) do
     local planet = {}
+    local planetVariants = v.variants
+    local weightedList = {}
+    for planetName,planet in pairs(planetVariants) do
+      weightedList[planetName] = planet.weight 
+    end 
+    planet.variant = weighted_random(weightedList)
     planet.planetSize = math.random(5)
-    planet.orbitRadius = orbitsSorted[i]*10
-    planet.orbitalSpeed = orbitsSorted[#orbitsSorted+1-i]
-    planet.index = i
+    planet.orbitRadius = amount*10
+    planet.orbitalSpeed = amount*-10
+    planet.type = name
     planet.chunks = {}
     planet.actors = {}
     planet.objects = {}
     planet.collisionMap = {}
     table.insert(bodies,planet)
+    amount = amount + 1
   end
   return bodies
 end

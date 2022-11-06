@@ -11,6 +11,7 @@ global.currentUniverse = 2200
 global.currentPlanet = 2
 global.currentActor = 0
 global.planetAmount = 5
+global.planetTypes = {}
 global.buildSlot = 0
 global.buildSlotName = ""
 global.gameSprites = {}
@@ -50,7 +51,6 @@ space.offset = vector(0,0)
 space.centralCircle = {}
 space.dateString = ""
 space.bodies = {}
-
 function global.initializeGame()
   local playerData = love.filesystem.read("playerData.json")
   if playerData ~= nil then
@@ -76,6 +76,7 @@ function global.initializeGame()
     local spriteSlot = tonumber(string.sub(sprite,1,4))
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
+  planetGeneration.generatePlanetTypes()
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
   global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
   local universe = global.multiverse[global.currentUniverse]

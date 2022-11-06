@@ -21,17 +21,17 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
         local chunkPosition = centerOfRemoval+vector(x,y,z)
         if isChunkGenerated[universeObject.index] == nil then
           isChunkGenerated[universeObject.index] = {}
-          isChunkGenerated[universeObject.index][planet.index] = {}
+          isChunkGenerated[universeObject.index][planet.type] = {}
         end
-        if isChunkGenerated[universeObject.index][planet.index][chunkPositionString] == nil then
-          if love.filesystem.read(universeObject.index.."/"..planet.index.."/chunks/"..chunkPosition:__tostring()) == nil then
+        if isChunkGenerated[universeObject.index][planet.type][chunkPositionString] == nil then
+          if love.filesystem.read(universeObject.index.."/"..planet.type.."/chunks/"..chunkPosition:__tostring()) == nil then
             local chunk = chunkObject:new(chunkPosition)
             worldFunctions.generateTerrain(chunk,universeObject,planet)
-            isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = true
+            isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
             planet.chunks[chunk.chunkPosition:__tostring()] = chunk
           else
             local chunk = worldFunctions.loadChunk(universeObject,planet,chunkPosition)
-            isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = true
+            isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
             planet.chunks[chunk.chunkPosition:__tostring()] = chunk    
           end
         end
@@ -44,7 +44,7 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
-      isChunkGenerated[universeObject.index][planet.index][chunk.chunkPosition:__tostring()] = nil 
+      isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
         worldFunctions.saveChunk(universeObject,planet,chunk)
       end
@@ -107,7 +107,8 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
             local tilePosition = position+vector(x,y,z)
             if tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
-              if tilePosition.z == height then tileType = "ground" else tileType="wall" end
+              local foliage = global.planetTypes[planet.type].variants[planet.variant].foliage
+              if tilePosition.z == height then tileType = foliage.ground else tileType=foliage.dirt end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
               table.insert(chunk.objects,tile) 
