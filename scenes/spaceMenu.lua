@@ -31,23 +31,60 @@ function s.draw()
     }
     local currentPlanetPosition = pointOnACircle(space.bodies[planet].orbitRadius,space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,0.0001*space.viewingTime*space.bodies[planet].orbitalSpeed)
     local planetPositions = {}
+    local bodyCount = 0
     for i,v in pairs(space.bodies) do
-      local planetType = global.planetTypes[v.type][v.variant]
+      bodyCount = bodyCount + 1
+    end
+    local parentalBodies = {}
+    for i,v in pairs(space.bodies) do
+      local planetVariant = global.planetTypes[v.type].variants[v.variant]
+      local planetType = global.planetTypes[v.type]
       if i == planet then
         love.graphics.setColor(0.2,1,0.2)
       else
         love.graphics.setColor(0.2,0.2,0.2)
       end
-      -- draw orbit line
-      createAndInsertTable(renderStack,3,love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100))
-      -- find position on the orbit line
-      local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime*v.orbitalSpeed)
+      --cycle 1 - draw all planets without parents
+      if v.parent == nil then
+        -- draw orbit line
+        createAndInsertTable(renderStack,3,love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100))
+        -- find position on the orbit line
+        local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime*v.orbitalSpeed)
+        
+        planetPositions[v.type] = point
+        love.graphics.setColor(planetVariant.color)
+        --draw planet
+        createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,v.planetSize))
+        --decrement parentless bodies
+        bodyCount = bodyCount - 1
+      else
+        table.insert(parentalBodies,v.type)
+      end
       
-      planetPositions[v.type] = point
-      love.graphics.setColor(planetType.color)
-      --draw planet
-      createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,v.planetSize))
       love.graphics.setColor(1,1,1)
+    end
+    --cycle 2 - draw all parental bodies
+    local count = 0
+    while count <= bodyCount do
+      for i,planet in pairs(parentalBodies) do
+        local planetType = space.bodies[planet]
+        local parentPlanet = space.bodies[planetType.parent]
+        if planetPositions[planet] then
+          count = count + 1
+        elseif planetPositions[parentPlanet.type] then
+          local parentPosition = planetPositions[parentPlanet.type]
+          local point = pointOnACircle(planetType.orbitRadius,parentPosition.x,parentPosition.y,0.0001*space.viewingTime*planetType.orbitalSpeed)
+          planetPositions[planet] = point
+        end
+      end
+    end
+    for planetName,planetPosition in pairs(planetPositions) do
+      local planetType = space.bodies[planetName]
+      local parentPosition = planetPositions[planetType.parent]
+      if planetType.parent then
+        createAndInsertTable(renderStack,3,love.graphics.circle("line",parentPosition.x+space.offset.y,parentPosition.y+space.offset.x,planetType.orbitRadius))
+        createAndInsertTable(renderStack,3,love.graphics.circle("fill",planetPosition.x,planetPosition.y,planetType.planetSize))
+      end
     end
     createAndInsertTable(renderStack,3,love.graphics.print(tostring(space.viewingUniverse),width/2,20)) 
     createAndInsertTable(renderStack,3,love.graphics.print(space.dateString,width/2,40)) 

@@ -72,13 +72,13 @@ function worldFunctions.saveChunk(universe,planet,chunk)
     local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
     table.insert(savedChunk.objects,compressedObject)
   end
-  love.filesystem.createDirectory(universe.index.."/"..planet.index.."/chunks/")
+  love.filesystem.createDirectory(universe.index.."/"..planet.type.."/chunks/")
   local file = love.filesystem.newFile(chunk.chunkPosition:__tostring())
-  love.filesystem.write(universe.index.."/"..planet.index.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
+  love.filesystem.write(universe.index.."/"..planet.type.."/chunks/"..chunk.chunkPosition:__tostring(),lunajson.encode(savedChunk))
   global.chunkFiles[chunk.chunkPosition:__tostring()] = 1
 end
 function worldFunctions.loadChunk(universe,planet,chunkPosition)
-  local chunkData = love.filesystem.read(universe.index.."/"..planet.index.."/chunks/"..chunkPosition:__tostring())
+  local chunkData = love.filesystem.read(universe.index.."/"..planet.type.."/chunks/"..chunkPosition:__tostring())
   local chunk = chunkObject:new(chunkPosition)
   if chunkData ~= nil then
     local chunkData = lunajson.decode(chunkData)
@@ -100,7 +100,7 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
     local cachedNoise = {}
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
-        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index*global.currentPlanet)*global.heightMultiplier
+        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index+string.byte(global.currentPlanet))*global.heightMultiplier
         height = ceil(height)
         cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do

@@ -72,6 +72,7 @@ function functions.generatePlanets(amount,seed)
   math.randomseed(seed)
   local bodies = {}
   local orbitRadius = 1
+  local planetRelations = {}
   for name,v in pairs(global.planetTypes) do
     local planet = {}
     local planetVariants = v.variants
@@ -80,16 +81,24 @@ function functions.generatePlanets(amount,seed)
       weightedList[planetName] = planet.weight 
     end 
     planet.variant = weighted_random(weightedList)
-    planet.planetSize = math.random(5)
-    planet.orbitRadius = amount*10
-    planet.orbitalSpeed = amount*-10
+    planet.planetSize = v.radius
+    planet.orbitRadius = v.orbitRadius
+    planet.orbitalSpeed = v.orbitSpeed
+    planet.parent = v.parentBody
+    planet.connections = {}
     planet.type = name
     planet.chunks = {}
     planet.actors = {}
     planet.objects = {}
     planet.collisionMap = {}
-    table.insert(bodies,planet)
-    amount = amount + 1
+    bodies[planet.type] = planet
+  end
+  for name,v in pairs(bodies) do
+    if v.parent then
+      local parentBody = bodies[v.parent]
+      table.insert(parentBody.connections,name)
+      table.insert(v.connections,v.parent) 
+    end
   end
   return bodies
 end
