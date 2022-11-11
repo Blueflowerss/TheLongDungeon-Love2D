@@ -47,14 +47,16 @@ function s.draw()
       --cycle 1 - draw all planets without parents
       if v.parent == nil then
         -- draw orbit line
-        createAndInsertTable(renderStack,3,love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100))
+        drawToCanvas(renderStack,4)
+        love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100)
         -- find position on the orbit line
-        local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime*v.orbitalSpeed)
+        local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime*v.orbitalSpeed+planetType.orbitAhead)
         
         planetPositions[v.type] = point
         love.graphics.setColor(planetVariant.color)
         --draw planet
-        createAndInsertTable(renderStack,3,love.graphics.circle("fill",point.x,point.y,v.planetSize))
+        drawToCanvas(renderStack,3)
+        love.graphics.circle("fill",point.x,point.y,v.planetSize)
         --decrement parentless bodies
         bodyCount = bodyCount - 1
       else
@@ -73,7 +75,10 @@ function s.draw()
           count = count + 1
         elseif planetPositions[parentPlanet.type] then
           local parentPosition = planetPositions[parentPlanet.type]
-          local point = pointOnACircle(planetType.orbitRadius,parentPosition.x,parentPosition.y,0.0001*space.viewingTime*planetType.orbitalSpeed)
+          if planetType.orbitalAhead ~= 0 then
+            print(planetType.orbitalAhead)
+          end
+          local point = pointOnACircle(planetType.orbitRadius,parentPosition.x,parentPosition.y,0.0001*space.viewingTime*planetType.orbitalSpeed+planetType.orbitalAhead)
           planetPositions[planet] = point
         end
       end
@@ -82,16 +87,19 @@ function s.draw()
       local planetType = space.bodies[planetName]
       local parentPosition = planetPositions[planetType.parent]
       if planetType.parent then
-        createAndInsertTable(renderStack,3,love.graphics.circle("line",parentPosition.x+space.offset.y,parentPosition.y+space.offset.x,planetType.orbitRadius))
-        createAndInsertTable(renderStack,3,love.graphics.circle("fill",planetPosition.x,planetPosition.y,planetType.planetSize))
+        drawToCanvas(renderStack,2)
+        love.graphics.circle("line",parentPosition.x+space.offset.y,parentPosition.y+space.offset.x,planetType.orbitRadius)
+        drawToCanvas(renderStack,3)
+        love.graphics.circle("fill",planetPosition.x,planetPosition.y,planetType.planetSize)
       end
     end
-    createAndInsertTable(renderStack,3,love.graphics.print(tostring(space.viewingUniverse),width/2,20)) 
-    createAndInsertTable(renderStack,3,love.graphics.print(space.dateString,width/2,40)) 
+    love.graphics.print(tostring(space.viewingUniverse),width/2,20) 
+    love.graphics.print(space.dateString,width/2,40)
+    love.graphics.setCanvas()
+    reverseTable(renderStack)
     for _,renderLayer in pairs(renderStack) do
-        for _,renderCommand in pairs(renderLayer) do
-          love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])
-        end
+        love.graphics.draw(renderLayer)
+        renderLayer:release()
       end
     end
 function s.keypressed(key)

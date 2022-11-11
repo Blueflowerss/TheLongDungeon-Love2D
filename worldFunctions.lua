@@ -111,7 +111,7 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
               if tilePosition.z == height then tileType = foliage.ground else tileType=foliage.dirt end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
-              table.insert(chunk.objects,tile) 
+              table.insert(chunk.objects,tile)
               table.insert(planet.objects,tile)  
             end
           end

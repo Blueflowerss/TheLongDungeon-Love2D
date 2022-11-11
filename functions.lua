@@ -84,6 +84,7 @@ function functions.generatePlanets(amount,seed)
     planet.planetSize = v.radius
     planet.orbitRadius = v.orbitRadius
     planet.orbitalSpeed = v.orbitSpeed
+    planet.orbitalAhead = v.orbitAhead
     planet.parent = v.parentBody
     planet.connections = {}
     planet.type = name
@@ -169,6 +170,14 @@ function processCollisions(planet)
   planet.objects = objectsToKeep
   for actorIndex,actor in pairs(planet.actors) do
     createAndInsertTable(planet.collisionMap,actor.position:__tostring(),actor)
+  end
+end
+function drawToCanvas(renderstack,layer)
+  if renderstack[layer] ~= nil then
+    love.graphics.setCanvas(renderstack[layer])
+  else
+    renderstack[layer] = love.graphics.newCanvas()
+    love.graphics.setCanvas(renderstack[layer])
   end
 end
 -- from https://stackoverflow.com/questions/1340230/check-if-directory-exists-in-lua
