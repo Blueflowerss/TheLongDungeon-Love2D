@@ -10,6 +10,7 @@ function s.load ()
   space.viewingUniverse = global.currentUniverse
   space.viewingPlanet = global.currentPlanet
   space.viewingTime = timer
+  space.zoom = 1
   space.bodies = functions.generatePlanets(5,space.viewingUniverse)
   updateSpaceMenu()
 end
@@ -47,8 +48,8 @@ function s.draw()
       --cycle 1 - draw all planets without parents
       if v.parent == nil then
         -- draw orbit line
-        drawToCanvas(renderStack,4)
-        love.graphics.circle("line",space.centralCircle.middleHeight+space.offset.y,space.centralCircle.middleWidth+space.offset.x,v.orbitRadius*space.centralCircle.radius/100)
+        drawToCanvas(renderStack,5)
+        love.graphics.circle("line",(space.centralCircle.middleHeight+space.offset.x)*space.zoom,(space.centralCircle.middleWidth+space.offset.y)*space.zoom,(v.orbitRadius*space.centralCircle.radius/100)*space.zoom)
         -- find position on the orbit line
         local point = pointOnACircle(v.orbitRadius*space.centralCircle.radius/100,space.centralCircle.middleHeight,space.centralCircle.middleWidth,0.0001*space.viewingTime*v.orbitalSpeed+planetType.orbitAhead)
         
@@ -56,7 +57,7 @@ function s.draw()
         love.graphics.setColor(planetVariant.color)
         --draw planet
         drawToCanvas(renderStack,3)
-        love.graphics.circle("fill",point.x,point.y,v.planetSize)
+        love.graphics.circle("fill",(point.x+space.offset.x)*space.zoom,(point.y+space.offset.y)*space.zoom,v.planetSize*space.zoom)
         --decrement parentless bodies
         bodyCount = bodyCount - 1
       else
@@ -75,9 +76,6 @@ function s.draw()
           count = count + 1
         elseif planetPositions[parentPlanet.type] then
           local parentPosition = planetPositions[parentPlanet.type]
-          if planetType.orbitalAhead ~= 0 then
-            print(planetType.orbitalAhead)
-          end
           local point = pointOnACircle(planetType.orbitRadius,parentPosition.x,parentPosition.y,0.0001*space.viewingTime*planetType.orbitalSpeed+planetType.orbitalAhead)
           planetPositions[planet] = point
         end
@@ -87,10 +85,10 @@ function s.draw()
       local planetType = space.bodies[planetName]
       local parentPosition = planetPositions[planetType.parent]
       if planetType.parent then
-        drawToCanvas(renderStack,2)
-        love.graphics.circle("line",parentPosition.x+space.offset.y,parentPosition.y+space.offset.x,planetType.orbitRadius)
+        drawToCanvas(renderStack,5)
+        love.graphics.circle("line",(parentPosition.x+space.offset.x)*space.zoom,(parentPosition.y+space.offset.y)*space.zoom,planetType.orbitRadius*space.zoom)
         drawToCanvas(renderStack,3)
-        love.graphics.circle("fill",planetPosition.x,planetPosition.y,planetType.planetSize)
+        love.graphics.circle("fill",(planetPosition.x+space.offset.x)*space.zoom,(planetPosition.y+space.offset.y)*space.zoom,planetType.planetSize*space.zoom)
       end
     end
     love.graphics.print(tostring(space.viewingUniverse),width/2,20) 
@@ -99,6 +97,7 @@ function s.draw()
     reverseTable(renderStack)
     for _,renderLayer in pairs(renderStack) do
         love.graphics.draw(renderLayer)
+        --without this new canvases will be created and clog up the memory
         renderLayer:release()
       end
     end

@@ -48,6 +48,7 @@ space.viewingUniverse = 2200
 space.viewingPlanet = 1
 space.viewingTime = 1
 space.offset = vector(0,0)
+space.zoom = 0
 space.centralCircle = {}
 space.dateString = ""
 space.bodies = {}

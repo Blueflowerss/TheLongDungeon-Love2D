@@ -173,30 +173,36 @@ function SPACEMENU()
     Scene.Load(global.scenes["GAMESCENE"])
   end
   function up()
-    space.viewingPlanet = functions.clamp(1,space.viewingPlanet-1,global.planetAmount)
-    updateSpaceMenu()
+    space.offset = space.offset + vector(0,10)
+    --space.viewingPlanet = functions.clamp(1,space.viewingPlanet-1,global.planetAmount)
+    --updateSpaceMenu()
   end
   function down()
-    space.viewingPlanet = functions.clamp(1,space.viewingPlanet+1,global.planetAmount)
-    updateSpaceMenu()
+    space.offset = space.offset + vector(0,-10)
+    --space.viewingPlanet = functions.clamp(1,space.viewingPlanet+1,global.planetAmount)
+    --updateSpaceMenu()
   end
   function left()
-    space.viewingUniverse = space.viewingUniverse - 1
-    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
-    updateSpaceMenu()
+    space.offset = space.offset + vector(10,0)
+    --space.viewingUniverse = space.viewingUniverse - 1
+    --space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    --updateSpaceMenu()
   end
   function right()
-    space.viewingUniverse = space.viewingUniverse + 1
-    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
-    updateSpaceMenu()
+    space.offset = space.offset + vector(-10,0) 
+    --space.viewingUniverse = space.viewingUniverse + 1
+    --space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    --updateSpaceMenu()
   end
   function minus()
-    space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
-    updateSpaceMenu()
+    --space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
+    --updateSpaceMenu()
+    space.zoom = space.zoom - 0.1
   end
   function plus()
-    space.viewingTime = space.viewingTime + 3600
-    updateSpaceMenu()
+    --space.viewingTime = space.viewingTime + 3600
+    --updateSpaceMenu()
+    space.zoom = space.zoom + 0.1
   end
   local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus}
   if keys[key] ~= nil then
