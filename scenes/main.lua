@@ -69,11 +69,22 @@ function s.draw()
       if collisionMap[objectPos] then
         for _,object in pairs(collisionMap[objectPos]) do
           if object.sprite ~= nil then
-            local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
-            if object.renderLayer ~= nil then
-              createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+            if object.visibleTo then
+              if player.flags[object.visibleTo] then
+                local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
+                if object.renderLayer ~= nil then
+                  createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+                else
+                  createAndInsertTable(renderStack,2,renderCommand)
+                end
+              end
             else
-              createAndInsertTable(renderStack,2,renderCommand)
+              local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
+              if object.renderLayer ~= nil then
+                createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+              else
+                createAndInsertTable(renderStack,2,renderCommand)
+              end
             end
           end
         end

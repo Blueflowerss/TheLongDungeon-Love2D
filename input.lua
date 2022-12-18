@@ -1,4 +1,13 @@
 input = {}
+function interaction(name,object,actor)
+  function warp()
+    global.switchPlanet(global.currentPlanet,object.warpTo,actor)
+  end
+  local interactions = {warp=warp}
+  if interactions[name] then
+    interactions[name]()
+  end
+end
 
 function input:processInput(key)
   local keys = global.keyBindings[global.gameScene]
@@ -19,6 +28,18 @@ function input:processInput(key)
         actor:move(inputDirection)
       end
       function interactWithObject()
+        local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
+        local placedObjectPos = actor.position+inputDirection
+        local listPosition = planet.collisionMap[placedObjectPos:__tostring()]
+        if listPosition ~= nil then
+          for i,v in pairs(listPosition) do 
+            for flag,tu in pairs(v.flags) do
+              if interactionList[flag] then
+                interaction(flag,v,actor)
+              end
+            end
+          end
+        end
         inputCurrentMode = modes.MOVE
       end
       function destroyEntity()
@@ -126,16 +147,19 @@ function input:processInput(key)
     processInput()
   end
   function stepforward()
-    global.switchUniverse(global.currentUniverse,global.currentUniverse+1)
+    global.switchUniverse(global.currentUniverse,global.currentUniverse+1,global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor])
   end
   function stepback()
-    global.switchUniverse(global.currentUniverse,global.currentUniverse-1)
+    global.switchUniverse(global.currentUniverse,global.currentUniverse-1,global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor])
   end
   function placeObject()
     inputCurrentMode = modes.BUILD
   end
   function destroyObject()
     inputCurrentMode = modes.DESTROY
+  end
+  function interact()
+    inputCurrentMode = modes.INTERACT
   end
   function debug()
     for i,v in pairs(global.multiverse[global.currentUniverse].bodies[global.currentPlanet].objects) do
@@ -161,7 +185,7 @@ function input:processInput(key)
   local controls = {["moveleft"]=moveleft,["moveright"]=moveright,["moveup"]=moveup,["movedown"]=movedown,
     ["stepforward"]=stepforward,["stepback"]=stepback,climbup=climbup,climbdown=climbdown,debug=debug,
     build=placeObject,moverightup=moverightup,moverightdown=moverightdown,moveleftup=moveleftup,moveleftdown=moveleftdown,buildSlotLeft=buildSlotLeft,buildSlotRight=buildSlotRight,destroy = destroyObject,
-    ["escape"]=quit,
+    ["escape"]=quit,interact=interact,
     ["spacemenu"]=openSpaceMenu}
   if keys[key] ~= nil then
     controls[keys[key]]()
@@ -184,30 +208,40 @@ function SPACEMENU()
   end
   function left()
     space.offset = space.offset + vector(10,0)
-    --space.viewingUniverse = space.viewingUniverse - 1
-    --space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
-    --updateSpaceMenu()
   end
   function right()
     space.offset = space.offset + vector(-10,0) 
-    --space.viewingUniverse = space.viewingUniverse + 1
-    --space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
-    --updateSpaceMenu()
   end
   function minus()
-    --space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
-    --updateSpaceMenu()
     space.zoom = space.zoom - 0.1
   end
   function plus()
-    --space.viewingTime = space.viewingTime + 3600
-    --updateSpaceMenu()
     space.zoom = space.zoom + 0.1
   end
-  local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus}
+  function stepforward()
+    space.viewingUniverse = space.viewingUniverse + 1
+    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    updateSpaceMenu()
+  end
+  function stepback()
+    space.viewingUniverse = space.viewingUniverse - 1
+    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    updateSpaceMenu()
+  end
+  function timeforward()
+    space.viewingTime = space.viewingTime + 3600
+    updateSpaceMenu()
+  end
+  function timeback()
+    
+    space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
+    updateSpaceMenu()
+  end
+  local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus,stepforward=stepforward,stepback=stepback,
+timeforward=timeforward,timeback=timeback}
   if keys[key] ~= nil then
-  controls[keys[key]]()
-end
+    controls[keys[key]]()
+  end
 end
 local scenes = {
   ["GAMESCENE"] = GAMESCENE,

@@ -1,7 +1,18 @@
 classFactory = {}
 local flagDefinitions = {}
-local interactions = {"door","sign"}
-
+local init = {warp=true}
+function initObject(object,flag)
+  function warp()
+    math.randomseed(global.currentUniverse)
+    local body = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
+    local destination = math.random(#body.connections)
+    object.warpTo = body.connections[destination]
+  end
+  local functions = {warp=warp}
+  if functions[flag] then
+    functions[flag]()
+  end
+end
 local blueprints = {}
 local objects = {}
 --databaseLength is just length of the finishedObjects table, cheaper to do it this way.
@@ -17,7 +28,8 @@ function classFactory.init()
     ["door"]={["state"]=false,["spriteTrue"]=1,["spriteFalse"]=1},
     ["sign"]={["text"]=""},
     ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""},
-    ["floor"]={["renderLayer"]=0}
+    ["floor"]={["renderLayer"]=0},
+    ["warp"]={["init"]={"warp"}}
     
 }
   --get blueprint json files
@@ -40,7 +52,7 @@ function classFactory.init()
   for objectIndex,object in pairs(objects) do
     local o = {}
     o.flags = object.flags 
-    interactions = {}
+    o.interactions = {}
     for flag,_ in pairs(o.flags) do
       if flagDefinitions[flag] then
         definition = flagDefinitions[flag] 
@@ -50,11 +62,11 @@ function classFactory.init()
         end
       end
       --if there are any flags that indicate interactability, then note them down
-      for _,interaction in pairs(interactions) do
-        if flag == interaction and o.interactions[flag] == nil then
+      
+        if interactionList[flag] == 0 and o.interactions[flag] == nil then
           table.insert(o.interactions,flag)
         end
-      end
+      --if there are any objects which need initialization, then do so
       --add rest of the data from the file
       for attributeName,attribute in pairs(object.data) do
         o[attributeName] = attribute
@@ -67,5 +79,11 @@ function classFactory.init()
   end
 end
 function classFactory.getObject(devname)
-  return table.shallow_copy(classFactory.finishedObjects[devname])
+  local object = table.shallow_copy(classFactory.finishedObjects[devname])
+  if object.init then
+    for i,v in pairs(object.init) do
+      initObject(object,v)
+    end
+  end
+  return object
 end

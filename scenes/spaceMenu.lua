@@ -10,6 +10,7 @@ function s.load ()
   space.viewingUniverse = global.currentUniverse
   space.viewingPlanet = global.currentPlanet
   space.viewingTime = timer
+  space.offset = vector()
   space.zoom = 1
   space.bodies = functions.generatePlanets(5,space.viewingUniverse)
   updateSpaceMenu()

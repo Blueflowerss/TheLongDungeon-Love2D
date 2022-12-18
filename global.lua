@@ -12,6 +12,9 @@ global.currentPlanet = "earth"
 global.currentActor = 0
 global.planetAmount = 5
 global.planetTypes = {}
+global.biomes = {}
+global.biomesIndexed = {}
+global.biomeAmount = 0
 global.buildSlot = 0
 global.buildSlotName = ""
 global.gameSprites = {}
@@ -20,7 +23,7 @@ global.spriteDistancing = 128
 global.spriteScaling = 0.5
 global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
-    ["position"]=0,["state"]=0,["text"]=""
+    ["position"]=0,["state"]=0,["text"]="",["warpTo"]=0
 }
 global.gameScene = null
 global.scenes = {
@@ -36,14 +39,16 @@ global.chunkFiles = {}
 global.keyBindings = {["GAMESCENE"]={["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
 w="moveup",s='movedown',d='moveright',a='moveleft',["k"]="stepback",["l"]="stepforward",[","]="climbup",["."]="climbdown",
 g="debug",
-b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",
+b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",["space"]="interact",
 kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
 kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
 escape="escape",
 m="spacemenu"},
 ["SPACEMENU"]={
-  m="exitmenu",left="left",right="right",down="down",up="up",["kp+"]="plus",["kp-"]="minus"
+  m="exitmenu",left="left",right="right",down="down",up="up",["kp+"]="plus",["kp-"]="minus",
+  ["k"]="stepback",["l"]="stepforward",[","]="timeback",["."]="timeforward"
 }}
+interactionList = {door=0,sign=0,warp=0}
 space.viewingUniverse = 2200
 space.viewingPlanet = 1
 space.viewingTime = 1
@@ -78,22 +83,21 @@ function global.initializeGame()
     global.gameSprites[spriteSlot] = love.graphics.newImage("/sprites/"..sprite) 
   end
   planetGeneration.generatePlanetTypes()
+  planetGeneration.generateBiomes()
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
   global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
   local universe = global.multiverse[global.currentUniverse]
   worldFunctions.chunkGeneration(universe.bodies[global.currentPlanet].actors[global.currentActor].position,3,universe,universe.bodies[global.currentPlanet])
 end
 
-function global.switchUniverse(originalUniverse,destinationUniverse)
+function global.switchUniverse(originalUniverse,destinationUniverse,actor)
   local originalUniverseObject = global.multiverse[originalUniverse]
-  local player = originalUniverseObject.bodies[global.currentPlanet].actors[global.currentActor]
+  local player = actor
   if global.multiverse[destinationUniverse] == nil then
     global.multiverse[destinationUniverse] = universe:new(destinationUniverse)
   end
   local destinationUniverseObject = global.multiverse[destinationUniverse]
   local destinationUniversePlanet = destinationUniverseObject.bodies[global.currentPlanet]
-  local dirOk = isdir(love.filesystem.getSaveDirectory().."/"..tostring(destinationUniverse).."/chunks/")
-  global.chunkFiles = love.filesystem.getDirectoryItems("/"..destinationUniverse.."/chunks/")
   worldFunctions.chunkGeneration(player.position,3,destinationUniverseObject,destinationUniversePlanet)
   processCollisions(destinationUniversePlanet)
   local objectList = destinationUniversePlanet.collisionMap
@@ -111,6 +115,24 @@ function global.switchUniverse(originalUniverse,destinationUniverse)
     global.multiverse[originalUniverse] = nil
   end
 end  
-
+function global.switchPlanet(originalPlanet,destinationPlanet,actor)
+  local universe = global.multiverse[global.currentUniverse]
+  local player = actor
+  local destinationUniversePlanet = universe.bodies[destinationPlanet]
+  worldFunctions.chunkGeneration(player.position,3,universe,destinationUniversePlanet)
+  processCollisions(destinationUniversePlanet)
+  local objectList = destinationUniversePlanet.collisionMap
+  local blocked = checkForFlag(objectList,player.position:__tostring(),"blocks")
+  if not blocked then
+    destinationUniversePlanet.actors[global.currentActor] = player
+    table.remove(universe.bodies[originalPlanet].actors,global.currentActor)
+    for chunkIndex,chunk in pairs(universe.bodies[global.currentPlanet].chunks) do 
+        if chunk.altered then
+          worldFunctions.saveChunk(universe,universe.bodies[global.currentPlanet],chunk)
+        end
+    end
+    global.currentPlanet = destinationPlanet
+  end
+end  
 function global.saveGame()
 end

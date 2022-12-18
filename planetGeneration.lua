@@ -12,3 +12,17 @@ function planetGeneration.generatePlanetTypes()
         
     end
 end
+function planetGeneration.generateBiomes()
+    local biomesFile = love.filesystem.read("data/biomes.json")
+    local biomes = lunajson.decode(biomesFile)
+    for biomeName,biome in pairs(biomes) do 
+        global.biomes[biomeName] = {}
+        local newBiome = {}
+        for var,val in pairs(biome) do
+            newBiome[var] = val
+        end
+        global.biomeAmount = global.biomeAmount + 1
+        global.biomesIndexed[#global.biomesIndexed+1] = biomeName
+        global.biomes[biomeName] = newBiome
+    end
+end

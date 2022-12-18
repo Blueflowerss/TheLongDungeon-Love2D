@@ -1,0 +1,6 @@
+{
+    "plains":{"ground":"ground","dirt":"wall","foliage":["ramp","wall"]},
+    "frozenearth":{"ground":"snowground","dirt":"wall"},
+    "barrenmoon":{"ground":"ground","dirt":"wall","scatter":["ramp"]},
+    "iceplains":{}
+}

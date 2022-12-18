@@ -11,8 +11,7 @@
         },
     "binaryStar1":{
         "variants":{
-            "plains":{"devname":"plains","biomes":{"plains":10,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[0,0.8,0],"weight":100},
-            "frozenearth":{"devname":"frozenearth","biomes":{"iceplains":5,"iceOcean":20},"foliage":{"ground":"snowground","dirt":"icewall","scatter":["ramp"]},"color":[0.9,0.9,0.9],"weight":10}
+            "solar":{"devname":"plains","biomes":{"plains":10,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[1,1,0],"weight":100}
         },
         "radius":10,
         "orbitSpeed":0.05,
@@ -21,8 +20,7 @@
         },
     "binaryStar2":{
         "variants":{
-            "plains":{"devname":"plains","biomes":{"plains":10,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[0,0.8,0],"weight":100},
-            "frozenearth":{"devname":"frozenearth","biomes":{"iceplains":5,"iceOcean":20},"foliage":{"ground":"snowground","dirt":"icewall","scatter":["ramp"]},"color":[0.9,0.9,0.9],"weight":10}
+            "solar":{"devname":"plains","biomes":{"plains":1000,"ocean":30},"color":[1,1,0],"weight":100}
         },
         "radius":6,
         "parent":"sun",
@@ -32,10 +30,10 @@
         },
     "earth":{
         "variants":{
-            "plains":{"devname":"plains","biomes":{"plains":10,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[0,0.8,0],"weight":100},
+            "plains":{"devname":"plains","biomes":{"plains":1000,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[0,0.8,0],"weight":100},
             "frozenearth":{"devname":"frozenearth","biomes":{"iceplains":5,"iceOcean":20},"foliage":{"ground":"snowground","dirt":"icewall","scatter":["ramp"]},"color":[0.9,0.9,0.9],"weight":10}
         },
-        "radius":3,
+        "radius":12,
         "orbitSpeed":0.05,
         "orbitAhead":0,
         "parent":"sun",
@@ -45,7 +43,7 @@
         "barrenmoon":{"devname":"barrenmoon","biomes":{"plains":10,"ocean":30},"foliage":{"ground":"ground","dirt":"wall","scatter":["ramp"]},"color":[0,0.8,0],"weight":100}
         },
         "parentBody":"earth",
-        "radius":5,
+        "radius":3,
         "orbitAhead":0,
         "orbitRadius":30,
         "orbitSpeed":0.2

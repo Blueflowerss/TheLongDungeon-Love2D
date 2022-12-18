@@ -4,7 +4,7 @@ function playerObject:new(spawnVector)
     local o = {}
     o.sprite = 3
     o.renderLayer = 1
-    o.flags = {}
+    o.flags = {warpActor=true }
     o.position = spawnVector
     o.walkingTo = o.position
     o.playerLastChunk = o.position
@@ -21,11 +21,13 @@ function playerObject:new(spawnVector)
       end
       local objectList = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
       local tile =  objectList[o.position:__tostring()]
-        local falling = true
-      for _,object in pairs(tile) do
-        if object.flags["floor"] then
-          falling = false
-          break
+      local falling = true
+      if tile then
+        for _,object in pairs(tile) do
+          if object.flags["floor"] then
+            falling = false
+            break
+          end
         end
       end
       if falling and not global.gravityToggle then

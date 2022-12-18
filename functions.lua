@@ -31,6 +31,9 @@ function functions.reverseTable(t)
     n = n - 1
   end
 end
+function range(min,value,max) 
+  return (x - min) * (max - x) >= 0
+end
 function functions.clamp(low, n, high) return min(max(n, low), high) end
 function functions.generateTerrainNoise(octaves,x,y,z,value)
   local tmpNoise = 0
