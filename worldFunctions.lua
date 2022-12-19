@@ -10,33 +10,36 @@ local normalize = functions.normalize
 isTileGenerated = {}
 isRampGenerated = {}
 isChunkGenerated = {}
-function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject,planet)
+function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObject,planet,generate)
   --centerOfRemoval is player's position 
+  generate = generate or true
   local centerOfRemoval = vector(centerOfRemovalVector.x/global.chunkSize,centerOfRemovalVector.y/global.chunkSize,centerOfRemovalVector.z/global.height):floor()
   local height = global.height
-  for x=-range,range do
-    for y=-range,range do
-      for z=-height,height do
-        local chunkPositionString = (centerOfRemoval+vector(x,y,z)):__tostring()
-        local chunkPosition = centerOfRemoval+vector(x,y,z)
-        if isChunkGenerated[universeObject.index] == nil or isChunkGenerated[universeObject.index][planet.type] == nil then
-          isChunkGenerated[universeObject.index] = {}
-          isChunkGenerated[universeObject.index][planet.type] = {}
-        end
-        if isChunkGenerated[universeObject.index][planet.type][chunkPositionString] == nil then
-          if love.filesystem.read(universeObject.index.."/"..planet.type.."/chunks/"..chunkPosition:__tostring()) == nil then
-            local chunk = chunkObject:new(chunkPosition)
-            worldFunctions.generateTerrain(chunk,universeObject,planet)
-            isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
-            planet.chunks[chunk.chunkPosition:__tostring()] = chunk
-          else
-            local chunk = worldFunctions.loadChunk(universeObject,planet,chunkPosition)
-            isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
-            planet.chunks[chunk.chunkPosition:__tostring()] = chunk    
+  if generate then
+    for x=-range,range do
+      for y=-range,range do
+        for z=-height,height do
+          local chunkPositionString = (centerOfRemoval+vector(x,y,z)):__tostring()
+          local chunkPosition = centerOfRemoval+vector(x,y,z)
+          if isChunkGenerated[universeObject.index] == nil or isChunkGenerated[universeObject.index][planet.type] == nil then
+            isChunkGenerated[universeObject.index] = {}
+            isChunkGenerated[universeObject.index][planet.type] = {}
+          end
+          if isChunkGenerated[universeObject.index][planet.type][chunkPositionString] == nil then
+            if love.filesystem.read(universeObject.index.."/"..planet.type.."/chunks/"..chunkPosition:__tostring()) == nil then
+              local chunk = chunkObject:new(chunkPosition)
+              worldFunctions.generateTerrain(chunk,universeObject,planet)
+              isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
+              planet.chunks[chunk.chunkPosition:__tostring()] = chunk
+            else
+              local chunk = worldFunctions.loadChunk(universeObject,planet,chunkPosition)
+              isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = true
+              planet.chunks[chunk.chunkPosition:__tostring()] = chunk    
+            end
           end
         end
-      end
-    end 
+      end 
+    end
   end
   local chunksToKeep = {}
   for chunkIndex,chunk in pairs(planet.chunks) do 
@@ -44,7 +47,6 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
     if distanceFromPlayer <= global.chunkUnloadDistance then
       chunksToKeep[chunkIndex] = chunk
     else
-      print(chunkIndex)
       isChunkGenerated[universeObject.index][planet.type][chunk.chunkPosition:__tostring()] = nil 
       if chunk.altered then
         worldFunctions.saveChunk(universeObject,planet,chunk)
@@ -67,10 +69,10 @@ function worldFunctions.saveChunk(universe,planet,chunk)
     local objectData = {}
     for dataType,data in pairs(object) do
       if global.saveableData[dataType] == 0 then
-        table.insert(objectData,{[dataType]=data})
+        objectData[dataType] = data
       end
     end
-    local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()}}
+    local compressedObject = {devname=object.devname,data=object.flags,position={object.position:unpack()},data2=objectData}
     table.insert(savedChunk.objects,compressedObject)
   end
   love.filesystem.createDirectory(universe.index.."/"..planet.type.."/chunks/")
@@ -86,6 +88,9 @@ function worldFunctions.loadChunk(universe,planet,chunkPosition)
     for i,value in pairs(chunkData) do
       for i,object in pairs(value) do
         local newObject = classFactory.getObject(object.devname)
+        for dataType,data in pairs(object.data2) do
+          newObject[dataType] = data
+        end
         if object.position ~= nil then
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end

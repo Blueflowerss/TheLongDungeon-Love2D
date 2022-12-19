@@ -23,7 +23,7 @@ global.spriteDistancing = 128
 global.spriteScaling = 0.5
 global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
-    ["position"]=0,["state"]=0,["text"]="",["warpTo"]=0
+    ["state"]=0,["text"]="",["warpTo"]=0
 }
 global.gameScene = null
 global.scenes = {
@@ -118,11 +118,26 @@ end
 function global.switchPlanet(originalPlanet,destinationPlanet,actor)
   local universe = global.multiverse[global.currentUniverse]
   local player = actor
+  print(destinationPlanet)
+  if universe.bodies[destinationPlanet] == nil then
+    universe.bodies[destinationPlanet] = functions.generatePlanets(universe.index,destinationPlanet)
+    print(inspect(universe.bodies[destinationPlanet]))
+  end
   local destinationUniversePlanet = universe.bodies[destinationPlanet]
   worldFunctions.chunkGeneration(player.position,3,universe,destinationUniversePlanet)
   processCollisions(destinationUniversePlanet)
   local objectList = destinationUniversePlanet.collisionMap
   local blocked = checkForFlag(objectList,player.position:__tostring(),"blocks")
+  if blocked then
+    local i = 0
+    while blocked and i<10 do
+      blocked = checkForFlag(objectList,(player.position+vector(0,0,i)):__tostring(),"blocks")
+      i = i + 1
+    end
+    if not blocked then
+      player.position = player.position+vector(0,0,i)
+    end
+  end
   if not blocked then
     destinationUniversePlanet.actors[global.currentActor] = player
     table.remove(universe.bodies[originalPlanet].actors,global.currentActor)
@@ -131,7 +146,8 @@ function global.switchPlanet(originalPlanet,destinationPlanet,actor)
           worldFunctions.saveChunk(universe,universe.bodies[global.currentPlanet],chunk)
         end
     end
-    global.currentPlanet = destinationPlanet
+    global.currentPlanet = destinationPlanet  
+    universe.bodies[originalPlanet] = nil
   end
 end  
 function global.saveGame()

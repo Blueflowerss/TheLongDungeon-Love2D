@@ -3,7 +3,6 @@ local flagDefinitions = {}
 local init = {warp=true}
 function initObject(object,flag)
   function warp()
-    math.randomseed(global.currentUniverse)
     local body = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
     local destination = math.random(#body.connections)
     object.warpTo = body.connections[destination]
