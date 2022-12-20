@@ -118,11 +118,6 @@ end
 function global.switchPlanet(originalPlanet,destinationPlanet,actor)
   local universe = global.multiverse[global.currentUniverse]
   local player = actor
-  print(destinationPlanet)
-  if universe.bodies[destinationPlanet] == nil then
-    universe.bodies[destinationPlanet] = functions.generatePlanets(universe.index,destinationPlanet)
-    print(inspect(universe.bodies[destinationPlanet]))
-  end
   local destinationUniversePlanet = universe.bodies[destinationPlanet]
   worldFunctions.chunkGeneration(player.position,3,universe,destinationUniversePlanet)
   processCollisions(destinationUniversePlanet)
@@ -130,6 +125,7 @@ function global.switchPlanet(originalPlanet,destinationPlanet,actor)
   local blocked = checkForFlag(objectList,player.position:__tostring(),"blocks")
   if blocked then
     local i = 0
+    --teleport correction, teleports the player upto 10 tiles higher
     while blocked and i<10 do
       blocked = checkForFlag(objectList,(player.position+vector(0,0,i)):__tostring(),"blocks")
       i = i + 1
@@ -147,7 +143,7 @@ function global.switchPlanet(originalPlanet,destinationPlanet,actor)
         end
     end
     global.currentPlanet = destinationPlanet  
-    universe.bodies[originalPlanet] = nil
+    universe.bodies[originalPlanet].objects = {}
   end
 end  
 function global.saveGame()

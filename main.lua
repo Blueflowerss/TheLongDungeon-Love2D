@@ -19,6 +19,7 @@ lunajson = require 'lunajson'
 tick = require("tick")
 vector = require("vector")
 inspect = require("inspect")
+require("randomlua")
 
 require "global"
 

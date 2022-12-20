@@ -106,11 +106,11 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
     local cachedNoise = {}
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
-        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index+string.byte(global.currentPlanet))*global.heightMultiplier
+        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index+string.byte(planet.type))*global.heightMultiplier
         local variant = global.planetTypes[planet.type].variants[planet.variant]
         height = ceil(height)
         local biome = global.biomes[planet.variant]
-        cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
+        --cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do
             local tilePosition = position+vector(x,y,z)
             if tilePosition.z<=height and tilePosition.z>= 0 then

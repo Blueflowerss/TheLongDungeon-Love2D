@@ -220,12 +220,12 @@ function SPACEMENU()
   end
   function stepforward()
     space.viewingUniverse = space.viewingUniverse + 1
-    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    space.bodies = functions.generatePlanets(space.viewingUniverse)
     updateSpaceMenu()
   end
   function stepback()
     space.viewingUniverse = space.viewingUniverse - 1
-    space.bodies = functions.generatePlanets(global.planetAmount,space.viewingUniverse)
+    space.bodies = functions.generatePlanets(space.viewingUniverse)
     updateSpaceMenu()
   end
   function timeforward()

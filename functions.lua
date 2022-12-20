@@ -54,14 +54,15 @@ function functions.generateTerrainNoise(octaves,x,y,z,value)
   return tmpNoise
 end
 --from https://stackoverflow.com/questions/26855156/how-to-make-a-weighted-rng-in-roblox-lua-like-csgo-cases
-function weighted_random (weights)
+function weighted_random (weights,seed)
+  local RNG = twister(seed)
   local summ = 0
   for i, weight in pairs (weights) do
       summ = summ + weight
   end
   if summ == 0 then return end
   -- local value = math.random (summ) -- for integer weights only
-  local value = summ*math.random()
+  local value = summ*RNG:random()
   summ = 0
   for i, weight in pairs (weights) do
       summ = summ + weight
@@ -73,7 +74,6 @@ end
 
 function functions.generatePlanets(seed,type)
   type = type or "all"
-  math.randomseed(seed)
   local bodies = {}
   local orbitRadius = 1
   local planetRelations = {}
@@ -84,7 +84,7 @@ function functions.generatePlanets(seed,type)
     for planetName,planet in pairs(planetVariants) do
       weightedList[planetName] = planet.weight 
     end 
-    planet.variant = weighted_random(weightedList)
+    planet.variant = weighted_random(weightedList,seed)
     planet.planetSize = v.radius
     planet.orbitRadius = v.orbitRadius
     planet.orbitalSpeed = v.orbitSpeed
