@@ -1,11 +1,12 @@
 [
-{"data":{"devname":"stepbox","displayname":"Stepper Box","weight":1,"meleedamage":1,"sprite":601},"flags":["item","steppingtool"]},
-{"data":{"devname":"shovel","displayname":"Shovel","weight":6,"meleedamage":6,"sprite":1},"flags":["item","tool","digging"]},
-{"data":{"devname":"pickaxe","displayname":"Pickaxe","weight":10,"meleedamage":10,"sprite":1},"flags":["item","tool","mining","digging"]},
-{"data":{"devname":"door","displayname":"Door","spriteTrue":20,"spriteFalse":19,"sprite":19},"flags":["furniture","door"]},
-{"data":{"devname":"tree","displayname":"Tree","sprite":550},"flags":["furniture","chop","blocks"]},
-{"data":{"devname":"chair","displayname":"Chair","sprite":25},"flags":["furniture"]},
-{"data":{"devname":"bed","displayname":"Bed","sprite":27},"flags":["furniture","sleep"]},
-{"data":{"devname":"sign","displayname":"Sign","sprite":28},"flags":["furniture","sign"]}
+{"data":{"devname":"stepbox","displayname":"Stepper Box","weight":1,"meleedamage":1,"sprite":601},"flags":{"item":true,"steppingtool":true}},
+{"data":{"devname":"shovel","displayname":"Shovel","weight":6,"meleedamage":6,"sprite":1},"flags":{"item":true,"tool":true,"digging":true}},
+{"data":{"devname":"pickaxe","displayname":"Pickaxe","weight":10,"meleedamage":10,"sprite":1},"flags":{"item":true,"tool":true,"mining":true,"digging":true}},
+{"data":{"devname":"door","displayname":"Door","spriteTrue":20,"spriteFalse":19,"sprite":19},"flags":{"furniture":true,"door":true}},
+{"data":{"devname":"tree","displayname":"Tree","sprite":550},"flags":{"tile":true,"blocks":true}},
+{"data":{"devname":"chair","displayname":"Chair","sprite":25},"flags":{"furniture":true}},
+{"data":{"devname":"bed","displayname":"Bed","sprite":27},"flags":{"furniture":true,"sleep":true}},
+{"data":{"devname":"sign","displayname":"Sign","sprite":28},"flags":{"furniture":true,"sign":true}},
+{"data":{"devname":"devworm","displayname":"The Worm","sprite":28,"visibleTo":"none","places":"door","duration":10,"placeInterval":3},"flags":{"worldgenworm":true,"tile":true}}
 ]
 

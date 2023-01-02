@@ -1,6 +1,5 @@
 {
-    "plains":{"ground":"ground","dirt":"wall","foliage":["ramp","wall"]},
-    "frozenearth":{"ground":"snowground","dirt":"wall"},
-    "barrenmoon":{"ground":"ground","dirt":"wall","scatter":["ramp"]},
-    "iceplains":{}
+    "plains":{"ground":"ground","dirt":"wall","foliageChance":-1,"foliage":{"tree":90,"warp":10}},
+    "frozenearth":{"ground":"snowground","dirt":"wall","foliageChance":-1,"foliage":{"tree":90,"warp":1}},
+    "barrenmoon":{"ground":"moonground","dirt":"icewall","foliageChance":-1,"foliage":{"warp":1}}
 }

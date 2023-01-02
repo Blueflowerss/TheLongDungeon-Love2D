@@ -61,7 +61,6 @@ function weighted_random (weights,seed)
       summ = summ + weight
   end
   if summ == 0 then return end
-  -- local value = math.random (summ) -- for integer weights only
   local value = summ*RNG:random()
   summ = 0
   for i, weight in pairs (weights) do
@@ -162,17 +161,21 @@ function checkForFlag(collisionMap,positionString,searchedFlag)
       end
     end
   else
-    return false
+    return false 
   end
 end
 local createAndInsertTable = functions.createAndInsertTable
 function processCollisions(planet)
   planet.collisionMap = {}
+  planet.processables = {}
   local objectsToKeep = {}
   for objectIndex,object in pairs(planet.objects) do
     if object.removed == nil then
       createAndInsertTable(planet.collisionMap,object.position:__tostring(),object)
       table.insert(objectsToKeep,object)
+      if object.process[1] then
+        table.insert(planet.processables,object)
+      end
     end
   end
   planet.objects = objectsToKeep

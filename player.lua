@@ -20,16 +20,7 @@ function playerObject:new(spawnVector)
         o.playerLastChunk = chunkPosition
       end
       local objectList = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
-      local tile =  objectList[o.position:__tostring()]
-      local falling = true
-      if tile then
-        for _,object in pairs(tile) do
-          if object.flags["floor"] then
-            falling = false
-            break
-          end
-        end
-      end
+      local falling = not checkForFlag(objectList,o.position:__tostring(),"floor")
       if falling and not global.gravityToggle then
         o.position = o.position-o.gravity
         o.walkingTo = o.position
@@ -39,17 +30,7 @@ function playerObject:new(spawnVector)
       end
       if o.position ~= o.walkingTo then
         local direction = ((o.walkingTo-o.position):norm()):specialCeil()
-        local blocked = false
-        if objectList[(o.position+direction):__tostring()] then
-          local tile = objectList[(o.position+direction):__tostring()]
-          for _,object in pairs(tile) do
-              if object.flags["blocks"] then
-                blocked = true
-                break
-              end
-        end
-        else
-        end
+        local blocked = checkForFlag(objectList,(o.position+direction):__tostring(),"blocks")
         if not blocked then
           o.position = o.position + direction
         else

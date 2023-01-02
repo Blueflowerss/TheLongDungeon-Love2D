@@ -1,6 +1,7 @@
 classFactory = {}
 local flagDefinitions = {}
 local init = {warp=true}
+local process = {worldgenworm=true,duration=true}
 function initObject(object,flag)
   function warp()
     local body = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
@@ -28,7 +29,8 @@ function classFactory.init()
     ["sign"]={["text"]=""},
     ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""},
     ["floor"]={["renderLayer"]=0},
-    ["warp"]={["init"]={"warp"}}
+    ["warp"]={["init"]={"warp"}},
+    ["worldgenworm"]={["process"]={}}
     
 }
   --get blueprint json files
@@ -52,6 +54,7 @@ function classFactory.init()
     local o = {}
     o.flags = object.flags 
     o.interactions = {}
+    o.process = {}
     for flag,_ in pairs(o.flags) do
       if flagDefinitions[flag] then
         definition = flagDefinitions[flag] 
@@ -65,13 +68,21 @@ function classFactory.init()
         if interactionList[flag] == 0 and o.interactions[flag] == nil then
           table.insert(o.interactions,flag)
         end
-      --if there are any objects which need initialization, then do so
-      --add rest of the data from the file
-      for attributeName,attribute in pairs(object.data) do
-        o[attributeName] = attribute
+        if process[flag] then
+          table.insert(o.process,flag)
+        end
+        --if there are any objects which need initialization, then do so
+        --add rest of the data from the file
+        for attributeName,attribute in pairs(object.data) do
+          o[attributeName] = attribute
+        end
       end
-    end
-    assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
+      for i,data in pairs(object.data) do
+        if process[i] then
+          table.insert(o.process,i)
+        end
+      end
+      assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
     classFactory.databaseLength = classFactory.databaseLength + 1
     classFactory.finishedObjects[o.devname] = o
     classFactory.finishedObjectsIndexTable[objectIndex] = o.devname

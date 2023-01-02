@@ -19,6 +19,7 @@ function s.quit()
   end
   global.playerData.position = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor].position:array()
   global.playerData.world = global.currentUniverse
+  global.playerData.planet = global.currentPlanet
   global.playerData.timer = timer
   love.filesystem.write("playerData.json",lunajson.encode(global.playerData))
   print("exiting")
@@ -115,9 +116,13 @@ function s.update(dt)
   for i,universe in pairs(global.multiverse) do
     for i,planet in pairs(universe.bodies) do
       processCollisions(planet)
+      for i,object in pairs(planet.processables) do
+        global.processObject(object)
+      end
       for i,actor in pairs(planet.actors) do
         actor:update(dt)
       end
+
     end
   end
 

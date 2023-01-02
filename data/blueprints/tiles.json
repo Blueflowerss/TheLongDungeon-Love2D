@@ -4,6 +4,7 @@
 {"data":{"devname":"woodramp","displayname":"Wooden ramp","sprite":7},"flags":{"tile":true,"floor":true,"ramp":true}},
 {"data":{"devname":"ramp","displayname":"ramp","sprite":8},"flags":{"tile":true,"floor":true,"ramp":true}},
 {"data":{"devname":"snowground","displayname":"snow","sprite":402},"flags":{"tile":true,"floor":true}},
+{"data":{"devname":"moonground","displayname":"Moon Rock","sprite":30},"flags":{"tile":true,"floor":true}},
 {"data":{"devname":"icewall","displayname":"Ice Wall","sprite":501},"flags":{"tile":true,"blocks":true}},
 {"data":{"devname":"water","displayname":"Water","sprite":501},"flags":{"tile":true,"water":true}},
 {"data":{"devname":"warp","displayname":"Soft Spot","sprite":999,"visibleTo":"warpActor"},"flags":{"tile":true,"warp":true}}

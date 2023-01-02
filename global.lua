@@ -33,7 +33,8 @@ global.scenes = {
 global.cameraPosition = vector(200,200)
 global.playerData = {
   position=vector(0,0):__tostring(),
-  world=global.currentUniverse
+  world=global.currentUniverse,
+  planet=global.currentPlanet
 }
 global.chunkFiles = {}
 global.keyBindings = {["GAMESCENE"]={["up"]="moveup",['down']="movedown",['left']="moveleft",['right']="moveright",
@@ -66,6 +67,7 @@ function global.initializeGame()
     end
     global.playerSpawnPoint = playerData.position
     global.currentUniverse = playerData.world
+    global.currentPlanet = playerData.planet
     timer = playerData.timer
   else
     timer = 3471321600
@@ -85,6 +87,7 @@ function global.initializeGame()
   planetGeneration.generatePlanetTypes()
   planetGeneration.generateBiomes()
   global.multiverse[global.currentUniverse] = universe:new(global.currentUniverse)
+  print(global.currentPlanet)
   global.multiverse[global.currentUniverse].bodies[global.currentPlanet].actors[global.currentActor] = playerObject:new(global.playerSpawnPoint)
   local universe = global.multiverse[global.currentUniverse]
   worldFunctions.chunkGeneration(universe.bodies[global.currentPlanet].actors[global.currentActor].position,3,universe,universe.bodies[global.currentPlanet])
@@ -126,7 +129,7 @@ function global.switchPlanet(originalPlanet,destinationPlanet,actor)
   if blocked then
     local i = 0
     --teleport correction, teleports the player upto 10 tiles higher
-    while blocked and i<10 do
+    while blocked and i<100 do
       blocked = checkForFlag(objectList,(player.position+vector(0,0,i)):__tostring(),"blocks")
       i = i + 1
     end
@@ -147,4 +150,21 @@ function global.switchPlanet(originalPlanet,destinationPlanet,actor)
   end
 end  
 function global.saveGame()
+end
+function global.processObject(object)
+  function worldgenworm()
+  end
+  function duration()
+    print(object.duration)
+    object.duration = object.duration - 1
+    if object.duration < 0 then
+      object.removed = true
+    end
+  end
+  local processables = {duration=duration,worldgenworm=worldgenworm}
+  for i,process in pairs(object.process) do
+    if processables[process] then
+      processables[process]()
+    end  
+  end
 end

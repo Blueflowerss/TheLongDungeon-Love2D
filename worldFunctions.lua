@@ -104,18 +104,32 @@ end
 function worldFunctions.generateTerrain(chunk,universeObject,planet) 
     local position = vector(chunk.chunkPosition.x*global.chunkSize,chunk.chunkPosition.y*global.chunkSize,chunk.chunkPosition.z*global.height)
     local cachedNoise = {}
+    local biome = global.biomes[planet.variant]
+    local RNG = twister(universeObject.index+string.byte(planet.type))
     for x=0,global.chunkSize do
       for y=0,global.chunkSize do
-        local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index+string.byte(planet.type))*global.heightMultiplier
-        local variant = global.planetTypes[planet.type].variants[planet.variant]
-        height = ceil(height)
-        local biome = global.biomes[planet.variant]
-        --cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
+          local height = generateTerrainNoise(3,x+position.x,y+position.y,universeObject.index+string.byte(planet.type))*global.heightMultiplier
+          local variant = global.planetTypes[planet.type].variants[planet.variant]
+          height = ceil(height)
+          local randomNumber = RNG:random(biome.foliageChance,1)
+          --cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
           for z=0,global.height do
             local tilePosition = position+vector(x,y,z)
             if tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
-              if tilePosition.z == height then tileType = biome.ground else tileType=biome.dirt end
+              if tilePosition.z == height then
+                tileType = biome.ground
+                if randomNumber>0 then
+                  local weightedResult = weighted_random(biome.foliage,universeObject.index+string.byte(planet.type))
+                  local tile = classFactory.getObject(weightedResult)
+                  tile.position = tilePosition
+                  table.insert(chunk.objects,tile)
+                  -- ^ needed for chunk clearing
+                  table.insert(planet.objects,tile)  
+                end
+              else 
+                tileType=biome.dirt
+              end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
               table.insert(chunk.objects,tile)
