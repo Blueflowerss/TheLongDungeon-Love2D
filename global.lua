@@ -4,6 +4,7 @@ global.noiseSettings = {}
 global.noiseSettings.tolerance = 0.5
 global.font = love.graphics.newFont("LiberationSans-Italic.ttf",30)
 global.chunkSize = 6
+
 global.height = 2
 global.heightMultiplier = 100
 global.chunkUnloadDistance = 4
@@ -28,7 +29,8 @@ global.saveableData = {
 global.gameScene = null
 global.scenes = {
   GAMESCENE = "main",
-  SPACEMENU = "spaceMenu"
+  SPACEMENU = "spaceMenu",
+  WORLDMENU = "worldMenu"
 }
 global.cameraPosition = vector(200,200)
 global.playerData = {
@@ -44,9 +46,13 @@ b="build",v="destroy",[","]="buildSlotLeft",["."]="buildSlotRight",["space"]="in
 kp8="moveup",kp2="movedown",kp6="moveright",kp4="moveleft",
 kp9="moverightup",kp3="moverightdown",kp7="moveleftup",kp1="moveleftdown",
 escape="escape",
-m="spacemenu"},
+m="spacemenu",n="worldmenu"},
 ["SPACEMENU"]={
   m="exitmenu",left="left",right="right",down="down",up="up",["kp+"]="plus",["kp-"]="minus",
+  ["k"]="stepback",["l"]="stepforward",[","]="timeback",["."]="timeforward"
+},
+["WORLDMENU"]={
+  n="exitmenu",left="left",right="right",down="down",up="up",["kp+"]="plus",["kp-"]="minus",
   ["k"]="stepback",["l"]="stepforward",[","]="timeback",["."]="timeforward"
 }}
 interactionList = {door=0,sign=0,warp=0}
@@ -152,10 +158,22 @@ end
 function global.saveGame()
 end
 function global.processObject(object)
+  local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
   function worldgenworm()
+    local RNG = twister(global.currentUniverse+string.byte(global.currentPlanet)+object.position.x)
+    local x = RNG:random(-1,1)
+    RNG:randomseed(global.currentUniverse+string.byte(global.currentPlanet)+object.position.y)
+    local y = RNG:random(-1,1)
+    object.position = object.position + vector(x,y)
+    local tile = classFactory.getObject(object.places)
+    tile.position = object.position
+    local chunk = vector(object.position.x/global.chunkSize,object.position.y/global.chunkSize,object.position.z/global.height):floor()
+    if planet.chunks[chunk:__tostring()] then
+      table.insert(planet.chunks[chunk:__tostring()].objects,tile)
+      table.insert(planet.objects,tile)
+    end
   end
   function duration()
-    print(object.duration)
     object.duration = object.duration - 1
     if object.duration < 0 then
       object.removed = true

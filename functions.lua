@@ -184,10 +184,11 @@ function processCollisions(planet)
   end
 end
 function drawToCanvas(renderstack,layer)
+  local X,Y = love.graphics.getDimensions()
   if renderstack[layer] ~= nil then
     love.graphics.setCanvas(renderstack[layer])
   else
-    renderstack[layer] = love.graphics.newCanvas()
+    renderstack[layer] = love.graphics.newCanvas(X*2,Y*2)
     love.graphics.setCanvas(renderstack[layer])
   end
 end

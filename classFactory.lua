@@ -30,7 +30,7 @@ function classFactory.init()
     ["tile"]={["position"]=vector(0,0),["sprite"]=1,["displayname"]=""},
     ["floor"]={["renderLayer"]=0},
     ["warp"]={["init"]={"warp"}},
-    ["worldgenworm"]={["process"]={}}
+    ["worldgenworm"]={["direction"]=vector(),["memoryMap"]={},["chunkPosition"]=vector()}
     
 }
   --get blueprint json files
@@ -63,25 +63,25 @@ function classFactory.init()
           o[attributeName] = attribute  
         end
       end
-      --if there are any flags that indicate interactability, then note them down
-      
-        if interactionList[flag] == 0 and o.interactions[flag] == nil then
-          table.insert(o.interactions,flag)
-        end
-        if process[flag] then
-          table.insert(o.process,flag)
-        end
-        --if there are any objects which need initialization, then do so
-        --add rest of the data from the file
-        for attributeName,attribute in pairs(object.data) do
-          o[attributeName] = attribute
-        end
+    --if there are any flags that indicate interactability, then note them down
+    
+      if interactionList[flag] == 0 and o.interactions[flag] == nil then
+        table.insert(o.interactions,flag)
       end
-      for i,data in pairs(object.data) do
-        if process[i] then
-          table.insert(o.process,i)
-        end
+      if process[flag] then
+        table.insert(o.process,flag)
       end
+      --if there are any objects which need initialization, then do so
+      --add rest of the data from the file
+      for attributeName,attribute in pairs(object.data) do
+        o[attributeName] = attribute
+      end
+    end
+    for i,data in pairs(object.data) do
+      if process[i] then
+        table.insert(o.process,i)
+      end
+    end
       assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
     classFactory.databaseLength = classFactory.databaseLength + 1
     classFactory.finishedObjects[o.devname] = o

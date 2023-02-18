@@ -45,10 +45,7 @@ function s.draw()
   end
   cameraOffset = global.cameraPosition*-global.spriteDistancing * global.spriteScaling
   local collisionMap = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
-  local backroundCanvas = love.graphics.newCanvas(resolution.x*2,resolution.y*2)
-  love.graphics.setCanvas(backroundCanvas)
   love.graphics.push()
-  love.graphics.scale(2)
   love.graphics.setColor({0,1.5,1})
   
 --  for x=-1,resolution.x/32 do
@@ -64,42 +61,52 @@ function s.draw()
   love.graphics.setColor({255,255,255})
   love.graphics.pop()
   love.graphics.setCanvas()
-  createAndInsertTable(renderStack,0,{backroundCanvas,0,0})
+  drawToCanvas(renderStack,0)
   if visible then
     for objectPos,object in pairs(visible) do
       if collisionMap[objectPos] then
         for _,object in pairs(collisionMap[objectPos]) do
           if object.sprite ~= nil then
+            if object.modulate then
+              love.graphics.setShader(modulate)
+              modulate:send("r",object.modulate[1])
+              modulate:send("g",object.modulate[2])
+              modulate:send("b",object.modulate[3])
+            end
             if object.visibleTo then
               if player.flags[object.visibleTo] then
-                local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
                 if object.renderLayer ~= nil then
-                  createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+                  drawToCanvas(renderStack,object.renderLayer)
                 else
-                  createAndInsertTable(renderStack,2,renderCommand)
+                  drawToCanvas(renderStack,2)
                 end
+                love.graphics.draw(global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y)
               end
             else
-              local renderCommand = {global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y}
               if object.renderLayer ~= nil then
-                createAndInsertTable(renderStack,object.renderLayer,renderCommand)
+                drawToCanvas(renderStack,object.renderLayer)
               else
-                createAndInsertTable(renderStack,2,renderCommand)
+                drawToCanvas(renderStack,2)
               end
+              love.graphics.draw(global.gameSprites[object.sprite],object.position.x*global.spriteDistancing*global.spriteScaling+cameraOffset.x+resolution.x,object.position.y*global.spriteDistancing*global.spriteScaling+cameraOffset.y+resolution.y)
             end
           end
+          love.graphics.setShader()
         end
       end
     end
   end
-  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,global.cameraPosition:__tostring()),10,10})
-  createAndInsertTable(renderStack,1,{love.graphics.newText(global.font,global.buildSlotName),10,30})
-  reverseTable(renderStack)
+  love.graphics.setShader()
+  drawToCanvas(renderStack,1)
+  love.graphics.draw(love.graphics.newText(global.font,global.cameraPosition:__tostring()),10,10)
+  love.graphics.draw(love.graphics.newText(global.font,global.buildSlotName),10,30)
   love.graphics.scale(global.spriteScaling)
+  love.graphics.setCanvas()
+  reverseTable(renderStack)
   for _,renderLayer in pairs(renderStack) do
-    for _,renderCommand in pairs(renderLayer) do
-      love.graphics.draw(renderCommand[1],renderCommand[2],renderCommand[3])
-    end
+    love.graphics.draw(renderLayer)
+    --without this new canvases will be created and clog up the memory
+    renderLayer:release()
   end
 end
 function s.keypressed(key)

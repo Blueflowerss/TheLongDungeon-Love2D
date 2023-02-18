@@ -12,6 +12,7 @@ require "tile"
 require "chunk"
 require "player"
 require "luatraverse"
+require "shaders.modulate"
 fov = require("rsfov") 
 --other tools
 love.profiler = require('profile') 

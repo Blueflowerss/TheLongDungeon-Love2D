@@ -55,51 +55,10 @@ function input:processInput(key)
         inputCurrentMode = modes.MOVE
       end
       function placeEntity()
-
         local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
         local placedObjectPos = actor.position+inputDirection
         local objectName = classFactory.finishedObjectsIndexTable[(global.buildSlot%classFactory.databaseLength)+1]
-        local object = classFactory.getObject(objectName)
-        object.position = placedObjectPos
-        local listPosition = planet.collisionMap[placedObjectPos:__tostring()]
-        local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):floor()
-        local chunk = planet.chunks[chunkPos:__tostring()]
-        local obstructed = false
-        local topObstructed = false
-        local constructRoof = false
-        if object.flags["blocks"] then
-          constructRoof = true
-        end
-        if listPosition ~= nil then
-          for i,v in pairs(listPosition) do
-            if v.flags["blocks"] then
-              break
-            end
-          end
-          listPosition = planet.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
-          if listPosition ~= nil and constructRoof then
-            for i,v in pairs(listPosition) do
-              if v.flags["floor"] or v.flags["blocks"] then
-                  topObstructed = true
-                  break
-              end
-            end
-          end
-        end
-        if not obstructed then
-          table.insert(planet.objects,object)
-          table.insert(chunk.objects,object)
-          if not topObstructed and constructRoof then
-            local object = classFactory.getObject("floor")
-            object.position = placedObjectPos+vector(0,0,1)
-            local aboveChunkPos = vector(object.position.x/global.chunkSize,object.position.y/global.chunkSize,object.position.z/global.height):floor()
-            local aboveChunk = planet.chunks[aboveChunkPos:__tostring()]
-            table.insert(chunk.objects,object)
-            table.insert(planet.objects,object)
-            aboveChunk.altered = true
-          end
-          chunk.altered = true
-        end
+        placeObject(objectName,placedObjectPos,planet)
         inputCurrentMode = modes.MOVE
       end
       local actions={[modes.MOVE]=moveEntity,[modes.INTERACT]=interactWithObject,[modes.BUILD]=placeEntity,[modes.DESTROY]=destroyEntity}
@@ -182,41 +141,87 @@ function input:processInput(key)
     global.gameScene = "SPACEMENU"
     Scene.Load(global.scenes["SPACEMENU"])
   end
+  function openWorldMenu()
+    global.gameScene = "WORLDMENU"
+    Scene.Load(global.scenes["WORLDMENU"])
+  end
   local controls = {["moveleft"]=moveleft,["moveright"]=moveright,["moveup"]=moveup,["movedown"]=movedown,
     ["stepforward"]=stepforward,["stepback"]=stepback,climbup=climbup,climbdown=climbdown,debug=debug,
     build=placeObject,moverightup=moverightup,moverightdown=moverightdown,moveleftup=moveleftup,moveleftdown=moveleftdown,buildSlotLeft=buildSlotLeft,buildSlotRight=buildSlotRight,destroy = destroyObject,
     ["escape"]=quit,interact=interact,
-    ["spacemenu"]=openSpaceMenu}
+    ["spacemenu"]=openSpaceMenu,worldmenu=openWorldMenu}
   if keys[key] ~= nil then
     controls[keys[key]]()
   end
 end
 function SPACEMENU()
+    function quitMenu()
+      global.gameScene = "GAMESCENE"
+      Scene.Load(global.scenes["GAMESCENE"])
+    end
+    function up()
+      space.offset = space.offset + vector(0,10)
+      --space.viewingPlanet = functions.clamp(1,space.viewingPlanet-1,global.planetAmount)
+      --updateSpaceMenu()
+    end
+    function down()
+      space.offset = space.offset + vector(0,-10)
+      --space.viewingPlanet = functions.clamp(1,space.viewingPlanet+1,global.planetAmount)
+      --updateSpaceMenu()
+    end
+    function left()
+      space.offset = space.offset + vector(10,0)
+    end
+    function right()
+      space.offset = space.offset + vector(-10,0) 
+    end
+    function minus()
+      space.zoom = space.zoom - 0.1
+    end
+    function plus()
+      space.zoom = space.zoom + 0.1
+    end
+    function stepforward()
+      space.viewingUniverse = space.viewingUniverse + 1
+      space.bodies = functions.generatePlanets(space.viewingUniverse)
+      updateSpaceMenu()
+    end
+    function stepback()
+      space.viewingUniverse = space.viewingUniverse - 1
+      space.bodies = functions.generatePlanets(space.viewingUniverse)
+      updateSpaceMenu()
+    end
+    function timeforward()
+      space.viewingTime = space.viewingTime + 3600
+      updateSpaceMenu()
+    end
+    function timeback()
+      
+      space.viewingTime = functions.clamp(0,space.viewingTime - 3600,math.huge)
+      updateSpaceMenu()
+    end
+    local controls = {exitmenu=quitMenu,left=left,right=right,up=up,down=down,minus=minus,plus=plus,stepforward=stepforward,stepback=stepback,
+  timeforward=timeforward,timeback=timeback}
+    if keys[key] ~= nil then
+      controls[keys[key]]()
+    end
+end
+function WORLDMENU()
   function quitMenu()
     global.gameScene = "GAMESCENE"
     Scene.Load(global.scenes["GAMESCENE"])
   end
   function up()
-    space.offset = space.offset + vector(0,10)
-    --space.viewingPlanet = functions.clamp(1,space.viewingPlanet-1,global.planetAmount)
-    --updateSpaceMenu()
   end
   function down()
-    space.offset = space.offset + vector(0,-10)
-    --space.viewingPlanet = functions.clamp(1,space.viewingPlanet+1,global.planetAmount)
-    --updateSpaceMenu()
   end
   function left()
-    space.offset = space.offset + vector(10,0)
   end
   function right()
-    space.offset = space.offset + vector(-10,0) 
   end
   function minus()
-    space.zoom = space.zoom - 0.1
   end
   function plus()
-    space.zoom = space.zoom + 0.1
   end
   function stepforward()
     space.viewingUniverse = space.viewingUniverse + 1
@@ -245,7 +250,8 @@ timeforward=timeforward,timeback=timeback}
 end
 local scenes = {
   ["GAMESCENE"] = GAMESCENE,
-  ["SPACEMENU"] = SPACEMENU
+  ["SPACEMENU"] = SPACEMENU,
+  ["WORLDMENU"] = WORLDMENU
 }
   if scenes[global.gameScene] ~= nil then
     scenes[global.gameScene]()

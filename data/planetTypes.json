@@ -2,7 +2,7 @@
     "sun":{
         "variants":{
             "plains":{"devname":"plains","biomes":{"plains":10,"ocean":30},"color":[0,0.8,0],"weight":100},
-            "frozenearth":{"devname":"frozenearth","biomes":{"iceplains":5,"iceOcean":20},"color":[0.9,0.9,0.9],"weight":10}
+            "frozenearth":{"devname":"frozenearth","biomes":{"iceplains":5,"iceOcean":20},"color":[0.9,0.9,0.9],"weight":10,"modulate":[true,true,true,100]}
         },
         "radius":0,
         "orbitSpeed":0.05,
