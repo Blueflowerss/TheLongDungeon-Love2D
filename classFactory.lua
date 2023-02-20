@@ -71,7 +71,6 @@ function classFactory.init()
         table.insert(o.process,flag)
       end
       --if there are any objects which need initialization, then do so
-      --i fucking hate my parents
       --add rest of the data from the file
       for attributeName,attribute in pairs(object.data) do
         o[attributeName] = attribute
@@ -82,6 +81,7 @@ function classFactory.init()
         table.insert(o.process,i)
       end
     end
+    --i fucking hate my parents
     if o.breaksInto then
       assert(classFactory.finishedObjects[o.breaksInto],o.breaksInto.." is not a valid object in ".. o.devname)
     end
