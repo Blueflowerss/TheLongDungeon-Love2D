@@ -24,7 +24,7 @@ global.spriteDistancing = 128
 global.spriteScaling = 0.5
 global.playerSpawnPoint = vector(460,20,100)
 global.saveableData = {
-    ["state"]=0,["text"]="",["warpTo"]=0
+    ["state"]=0,["text"]="",["warpTo"]=0,["modulate"]=0
 }
 global.gameScene = null
 global.scenes = {

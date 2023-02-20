@@ -1,13 +1,14 @@
 [{"data":{"devname":"ground","displayname":"Ground","sprite":401},"flags":{"tile":true,"floor":true}},
-{"data":{"devname":"wall","displayname":"Wall","sprite":500},"flags":{"tile":true,"blocks":true}},
-{"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6},"flags":{"tile":true,"floor":true}},
-{"data":{"devname":"woodramp","displayname":"Wooden ramp","sprite":7},"flags":{"tile":true,"floor":true,"ramp":true}},
+{"data":{"devname":"wall","displayname":"Wall","sprite":500,"breaksInto":"ground"},"flags":{"tile":true,"blocks":true}},
+{"data":{"devname":"floor","displayname":"Wooden Floor","sprite":6,"breaksInto":"ground"},"flags":{"tile":true,"floor":true}},
+{"data":{"devname":"woodramp","displayname":"Wooden ramp","sprite":7,"breaksInto":"floor"},"flags":{"tile":true,"floor":true,"ramp":true}},
 {"data":{"devname":"ramp","displayname":"ramp","sprite":8},"flags":{"tile":true,"floor":true,"ramp":true}},
 {"data":{"devname":"snowground","displayname":"snow","sprite":402},"flags":{"tile":true,"floor":true}},
 {"data":{"devname":"moonground","displayname":"Moon Rock","sprite":30},"flags":{"tile":true,"floor":true}},
-{"data":{"devname":"icewall","displayname":"Ice Wall","sprite":501},"flags":{"tile":true,"blocks":true}},
+{"data":{"devname":"icewall","displayname":"Ice Wall","sprite":501,"breaksInto":"snowGround"},"flags":{"tile":true,"blocks":true}},
 {"data":{"devname":"water","displayname":"Water","sprite":501},"flags":{"tile":true,"water":true}},
-{"data":{"devname":"warp","displayname":"Soft Spot","sprite":999,"visibleTo":"warpActor"},"flags":{"tile":true,"warp":true}}
+{"data":{"devname":"warp","displayname":"Soft Spot","sprite":999,"visibleTo":"warpActor"},"flags":{"tile":true,"warp":true}},
+{"data":{"devname":"air","displayname":"air","sprite":30},"flags":{"air":true}}
 
 
 ]

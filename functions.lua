@@ -176,6 +176,10 @@ function processCollisions(planet)
       if object.process[1] then
         table.insert(planet.processables,object)
       end
+    else
+      if object.chunkIndex then
+        table.remove(object.chunk,object.chunkIndex)
+      end
     end
   end
   planet.objects = objectsToKeep

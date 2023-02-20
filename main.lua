@@ -13,6 +13,7 @@ require "chunk"
 require "player"
 require "luatraverse"
 require "shaders.modulate"
+require "shaders.sky"
 fov = require("rsfov") 
 --other tools
 love.profiler = require('profile') 

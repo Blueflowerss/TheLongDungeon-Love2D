@@ -47,17 +47,7 @@ function s.draw()
   local collisionMap = global.multiverse[global.currentUniverse].bodies[global.currentPlanet].collisionMap
   love.graphics.push()
   love.graphics.setColor({0,1.5,1})
-  
---  for x=-1,resolution.x/32 do
---    for y=-1,resolution.y/32 do
---      local mask = player.position+vector(x,y)-vector(skyValue2[1] ,skyValue2[2])
---      mask = mask:ceil()
---      if collisionMap[mask:__tostring()] == nil and collisionMap[(mask-vector(0,0,1)):__tostring()] == nil then
---          love.graphics.rectangle("fill",ceil((x*32)+skyValue1[1]),ceil((y*32)+skyValue1[2]),32,32)
---      end
---
---    end
---  end
+  love.graphics.setShader()
   love.graphics.setColor({255,255,255})
   love.graphics.pop()
   love.graphics.setCanvas()
@@ -97,6 +87,9 @@ function s.draw()
     end
   end
   love.graphics.setShader()
+  --sky shader
+
+  --
   drawToCanvas(renderStack,1)
   love.graphics.draw(love.graphics.newText(global.font,global.cameraPosition:__tostring()),10,10)
   love.graphics.draw(love.graphics.newText(global.font,global.buildSlotName),10,30)

@@ -1,7 +1,7 @@
 function generateVisible()
   local tw,th      = 8,8
   local px,py      = 1,1
-  local radius     = 20
+  local radius     = 10
   local radius_type= 'square'
   local perm       = 5
   local angle      = 0

@@ -43,12 +43,20 @@ function input:processInput(key)
         inputCurrentMode = modes.MOVE
       end
       function destroyEntity()
-        local universe = global.multiverse[global.currentUniverse]
+        local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
         local placedObjectPos = actor.position+inputDirection
-        local listPosition = universe.collisionMap[placedObjectPos:__tostring()]
+        local listPosition = planet.collisionMap[placedObjectPos:__tostring()]
         if listPosition ~= nil then
-          for i,v in pairs(listPosition) do 
-            table.remove(universe.collisionMap[placedObjectPos:__tostring()],i)
+          if listPosition[#listPosition].breaksInto then
+            print(listPosition[#listPosition].breaksInto)
+            local tile = classFactory.getObject(listPosition[#listPosition].breaksInto)
+            tile.position = placedObjectPos
+            tile.chunk = listPosition[#listPosition].chunk
+            table.insert(tile.chunk,tile)
+            -- ^ needed for chunk clearings
+            listPosition[#listPosition].removed = true
+            table.insert(planet.objects,tile)  
+            tile.chunk.altered = true
           end
         end
 
@@ -58,7 +66,7 @@ function input:processInput(key)
         local planet = global.multiverse[global.currentUniverse].bodies[global.currentPlanet]
         local placedObjectPos = actor.position+inputDirection
         local objectName = classFactory.finishedObjectsIndexTable[(global.buildSlot%classFactory.databaseLength)+1]
-        placeObject(objectName,placedObjectPos,planet)
+        placeObjectEntity(objectName,placedObjectPos,planet)
         inputCurrentMode = modes.MOVE
       end
       local actions={[modes.MOVE]=moveEntity,[modes.INTERACT]=interactWithObject,[modes.BUILD]=placeEntity,[modes.DESTROY]=destroyEntity}

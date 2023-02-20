@@ -62,7 +62,6 @@ function worldFunctions.chunkGeneration(centerOfRemovalVector,range,universeObje
   planet.chunks = chunksToKeep
 end
 function worldFunctions.saveChunk(universe,planet,chunk)
-  -- POSITION FIELD IS PREVENTING OBJECTS FROM SAVING, SOMETHING ABOUT IT NOT ENCOMPASSING THE OBJECTS
   --could couple multiple objects into one position, if save filesize becomes an issue.
   local savedChunk = {["objects"]={}}
   for i,object in pairs(chunk.objects) do
@@ -94,6 +93,8 @@ function worldFunctions.loadChunk(universe,planet,chunkPosition)
         if object.position ~= nil then
           newObject.position = vector(object.position[1],object.position[2],object.position[3])
         end
+        newObject.chunk = chunk
+        newObject.chunkIndex = #chunk.objects+1
         table.insert(planet.objects,newObject)
         table.insert(chunk.objects,newObject)
       end
@@ -106,35 +107,35 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
     local cachedNoise = {}
     local biome = global.biomes[planet.variant]
     local RNG = twister(universeObject.index+string.byte(planet.type))
-    for x=0,global.chunkSize do
-      for y=0,global.chunkSize do
+    for x=1,global.chunkSize do
+      for y=1,global.chunkSize do
           local noise = generateTerrainNoise(1,x+position.x,y+position.y,universeObject.index+string.byte(planet.type))
           local height = noise*global.heightMultiplier
           local variant = global.planetTypes[planet.type].variants[planet.variant]
           height = ceil(height)
-          local randomNumber = RNG:random(biome.foliageChance,1)
+          --local randomNumber = RNG:random(biome.foliageChance,1)
           --cachedNoise[vector(x+position.x,y+position.y):__tostring()] = height
-          for z=0,global.height do
+          for z=1,global.height do
             local tilePosition = position+vector(x,y,z)
             if tilePosition.z<=height and tilePosition.z>= 0 then
               local tileType = ""
               if tilePosition.z == height then
                 tileType = biome.ground
-                if randomNumber>0 then
-                  --local weightedResult = weighted_random(biome.foliage,universeObject.index+string.byte(planet.type))
-                  --local tile = classFactory.getObject(weightedResult)
-                  --tile.position = tilePosition
-                  --table.insert(chunk.objects,tile)
-                  ---- ^ needed for chunk clearing
-                  --table.insert(planet.objects,tile)  
-                end
               else 
                 tileType=biome.dirt
               end
               local tile = classFactory.getObject(tileType)
               tile.position = tilePosition
-              local groundValue = normalize(RNG:random(x+position.x,y+position.y,z+position.z),x+position.x+y+position.y)
+              tile.chunk = chunk
+              tile.chunkIndex = #chunk.objects+1
+              local groundValue = normalize(RNG:random(x+position.x,y+position.y,z+position.z),x*position.x+y*position.y)
               tile.modulate = {1+groundValue/5,1+groundValue/5,1+groundValue/5}
+              table.insert(chunk.objects,tile)
+              -- ^ needed for chunk clearing
+              table.insert(planet.objects,tile)  
+            else
+              local tile = classFactory.getObject("air")
+              tile.position = tilePosition
               table.insert(chunk.objects,tile)
               -- ^ needed for chunk clearing
               table.insert(planet.objects,tile)  
@@ -162,13 +163,13 @@ function worldFunctions.generateTerrain(chunk,universeObject,planet)
     --end
   --end
 end
-function placeObject(devname,position,planet)
-  local objectName = classFactory.finishedObjects[devname]
-  local object = classFactory.getObject(objectName)
+function placeObjectEntity(devname,position,planet)
+  local object = classFactory.getObject(devname)
   object.position = position
   local listPosition = planet.collisionMap[position:__tostring()]
-  local chunkPos = vector(placedObjectPos.x/global.chunkSize,placedObjectPos.y/global.chunkSize,placedObjectPos.z/global.height):floor()
+  local chunkPos = vector(position.x/global.chunkSize,position.y/global.chunkSize,position.z/global.height):floor()
   local chunk = planet.chunks[chunkPos:__tostring()]
+  object.chunk = chunk
   local obstructed = false
   local topObstructed = false
   local constructRoof = false
@@ -181,7 +182,7 @@ function placeObject(devname,position,planet)
         break
       end
     end
-    listPosition = planet.collisionMap[(placedObjectPos+vector(0,0,1)):__tostring()]
+    listPosition = planet.collisionMap[(position+vector(0,0,1)):__tostring()]
     if listPosition ~= nil and constructRoof then
       for i,v in pairs(listPosition) do
         if v.flags["floor"] or v.flags["blocks"] then
@@ -196,7 +197,8 @@ function placeObject(devname,position,planet)
     table.insert(chunk.objects,object)
     if not topObstructed and constructRoof then
       local object = classFactory.getObject("floor")
-      object.position = placedObjectPos+vector(0,0,1)
+      object.position = position+vector(0,0,1)
+      object.chunk = chunk
       local aboveChunkPos = vector(object.position.x/global.chunkSize,object.position.y/global.chunkSize,object.position.z/global.height):floor()
       local aboveChunk = planet.chunks[aboveChunkPos:__tostring()]
       table.insert(chunk.objects,object)

@@ -64,7 +64,6 @@ function classFactory.init()
         end
       end
     --if there are any flags that indicate interactability, then note them down
-    
       if interactionList[flag] == 0 and o.interactions[flag] == nil then
         table.insert(o.interactions,flag)
       end
@@ -72,6 +71,7 @@ function classFactory.init()
         table.insert(o.process,flag)
       end
       --if there are any objects which need initialization, then do so
+      --i fucking hate my parents
       --add rest of the data from the file
       for attributeName,attribute in pairs(object.data) do
         o[attributeName] = attribute
@@ -82,7 +82,10 @@ function classFactory.init()
         table.insert(o.process,i)
       end
     end
-      assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
+    if o.breaksInto then
+      assert(classFactory.finishedObjects[o.breaksInto],o.breaksInto.." is not a valid object in ".. o.devname)
+    end
+    assert(not classFactory.finishedObjects[o.devname],"duplicate found by name of "..o.devname)
     classFactory.databaseLength = classFactory.databaseLength + 1
     classFactory.finishedObjects[o.devname] = o
     classFactory.finishedObjectsIndexTable[objectIndex] = o.devname
